@@ -1,0 +1,6 @@
+[submodule "JUCE"]
+	path = JUCE
+	url = https://github.com/juce-framework/JUCE.git
+[submodule "flucoma-core"]
+	path = flucoma-core
+	url = https://github.com/flucoma/flucoma-core.git
