@@ -1,3 +1,10 @@
 cmake-build-*/
 .idea/
 .DS_Store
+
+# AI tooling, kept private (CodeBox)
+.claude/
+.analyst/
+.opencode/
+CLAUDE.md
+CLAUDE.local.md
