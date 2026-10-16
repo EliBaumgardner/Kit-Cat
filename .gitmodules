@@ -4,3 +4,9 @@
 [submodule "flucoma-core"]
 	path = flucoma-core
 	url = https://github.com/flucoma/flucoma-core.git
+[submodule "ArsNovaUI"]
+	path = ArsNovaUI
+	url = https://github.com/EliBaumgardner/ArsNovaUI.git
+[submodule "Catch2"]
+	path = Catch2
+	url = https://github.com/catchorg/Catch2.git

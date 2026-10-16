@@ -1,63 +1,194 @@
 #include "Plugin/PluginEditor.h"
 #include "Plugin/PluginProcessor.h"
 
+#include <ArsNovaUI/Menus/SettingsMenu.h>
+#include <ArsNovaUI/Theme/InterfaceIdentifiers.h>
+
 CatKitAudioProcessorEditor::CatKitAudioProcessorEditor(CatKitAudioProcessor& audioProcessor)
     : AudioProcessorEditor(audioProcessor),
-      analysisPool(1)
+      audioUIBridge(audioProcessor.audioUIBridge),
+      corpusPublisher(audioProcessor.corpusPublisher),
+      slicePlayer(audioProcessor.slicePlayer),
+      corpusLoader(audioProcessor.corpusLoader),
+      settings(audioProcessor.settings),
+      colourPresets(audioProcessor.colourPresets),
+      undoManager(audioProcessor.undoManager),
+      parameterPanel(audioProcessor.settings, audioProcessor.undoManager)
 {
-    loadButton.setButtonText("Load sample");
-    loadButton.onClick = [this] { chooseFile(); };
+    juce::PropertiesFile::Options interfaceSettingsOptions;
 
-    resultLabel.setText("Load a sample to slice it and describe each slice.", juce::dontSendNotification);
-    resultLabel.setJustificationType(juce::Justification::topLeft);
-    resultLabel.setFont(juce::FontOptions(juce::Font::getDefaultMonospacedFontName(), 13.0f, juce::Font::plain));
+    interfaceSettingsOptions.applicationName     = "Interface";
+    interfaceSettingsOptions.filenameSuffix      = ".settings";
+    interfaceSettingsOptions.folderName          = JucePlugin_Name;
+    interfaceSettingsOptions.osxLibrarySubFolder = "Application Support";
 
-    addAndMakeVisible(loadButton);
-    addAndMakeVisible(resultLabel);
+    interfaceSettings = std::make_unique<juce::PropertiesFile>(interfaceSettingsOptions);
 
-    setSize(520, 320);
+    if (interfaceSettings->containsKey(InterfaceIdentifiers::ThemeColour.toString())) {
+        lookAndFeel.applyThemeColour(juce::Colour::fromString(interfaceSettings->getValue(InterfaceIdentifiers::ThemeColour.toString())));
+    }
+
+    setLookAndFeel(&lookAndFeel);
+
+    scaledView = std::make_unique<ScaledView>(workspace, *interfaceSettings);
+
+    scaledView->minimumContentSize = { Theme::windowGutter * 3 + ParameterPanel::minimumWidth + minimumMapWidth, Theme::windowGutter * 3 + Theme::barHeight + minimumMapHeight };
+    settingsLauncher.openingScale  = SettingsMenu::openingScale;
+
+    corpusBar.onLoad         = [this] { chooseCorpus(); };
+    corpusBar.onAnalyse      = [this] { corpusLoader.analyse(); };
+    corpusBar.onSaveAnalysis = [this] { chooseAnalysisToSave(); };
+    corpusBar.onLoadAnalysis = [this] { chooseAnalysisToLoad(); };
+
+    corpusBar.onSettings = [this] {
+        settingsLauncher.show(corpusBar, [this] {
+            std::unique_ptr<SettingsMenu> content = std::make_unique<SettingsMenu>(lookAndFeel, *interfaceSettings, *scaledView, colourPresets, undoManager);
+            const juce::Point<int>        size    = content->narrowestSize();
+
+            content->setSize(size.x, size.y);
+
+            return content;
+        });
+    };
+
+    scaledView->onZoomChanged = [this] {
+        const juce::Point<int>               minimumSize = scaledView->minimumContentSize;
+        juce::Component* const               window      = getTopLevelComponent();
+        const juce::Displays::Display* const display     = juce::Desktop::getInstance().getDisplays().getDisplayForRect(window->getScreenBounds());
+
+        setResizeLimits(juce::roundToInt(minimumSize.x * scaledView->zoom), juce::roundToInt(minimumSize.y * scaledView->zoom), maximumWindowSide, maximumWindowSide);
+
+        resized();
+
+        if (processor.wrapperType == juce::AudioProcessor::wrapperType_Standalone && display != nullptr) {
+            window->setBounds(window->getBounds().constrainedWithin(display->userArea));
+        }
+    };
+
+    corpusMap.onSlicePicked = [this](int sliceIndex) { slicePlayer.push({ SlicePlayer::CommandKind::Play, sliceIndex }); };
+
+    parameterPanel.resizer.onWidthDragged = [this](int newWidth) {
+        panelWidth = newWidth;
+
+        resized();
+    };
+
+    corpusLoader.addChangeListener(this);
+
+    changeListenerCallback(&corpusLoader);
+
+    workspace.addAndMakeVisible(corpusBar);
+    workspace.addAndMakeVisible(parameterPanel);
+    workspace.addAndMakeVisible(corpusMap);
+
+    addAndMakeVisible(*scaledView);
+
+    setResizable(true, true);
+    setSize(openingWidth, openingHeight);
+    setResizeLimits(juce::roundToInt(scaledView->minimumContentSize.x * scaledView->zoom), juce::roundToInt(scaledView->minimumContentSize.y * scaledView->zoom), maximumWindowSide, maximumWindowSide);
+    startTimerHz(60);
+}
+
+CatKitAudioProcessorEditor::~CatKitAudioProcessorEditor()
+{
+    stopTimer();
+
+    corpusLoader.removeChangeListener(this);
+
+    setLookAndFeel(nullptr);
 }
 
 void CatKitAudioProcessorEditor::paint(juce::Graphics& g)
 {
-    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
+    g.fillAll(lookAndFeel.windowColour);
 }
 
 void CatKitAudioProcessorEditor::resized()
 {
-    juce::Rectangle<int> bounds = getLocalBounds().reduced(12);
+    scaledView->setBounds(getLocalBounds());
 
-    loadButton.setBounds(bounds.removeFromTop(28).removeFromLeft(140));
-    bounds.removeFromTop(8);
-    resultLabel.setBounds(bounds);
+    juce::Rectangle<int> bounds      = workspace.getLocalBounds().reduced(Theme::windowGutter);
+    const int            widestPanel = juce::jmax(ParameterPanel::minimumWidth, juce::jmin(ParameterPanel::maximumWidth, bounds.getWidth() - Theme::windowGutter - minimumMapWidth));
+
+    panelWidth = juce::jlimit(ParameterPanel::minimumWidth, widestPanel, panelWidth);
+
+    corpusBar.setBounds(bounds.removeFromTop(Theme::barHeight));
+    bounds.removeFromTop(Theme::windowGutter);
+    parameterPanel.setBounds(bounds.removeFromRight(panelWidth));
+    bounds.removeFromRight(Theme::windowGutter);
+    corpusMap.setBounds(bounds);
 }
 
-void CatKitAudioProcessorEditor::chooseFile()
+void CatKitAudioProcessorEditor::chooseCorpus()
+{
+    const int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::canSelectDirectories;
+
+    fileChooser = std::make_unique<juce::FileChooser>("Choose a sample or a folder", juce::File(), CorpusAnalysis::audioFilePattern);
+
+    fileChooser->launchAsync(flags, [this](const juce::FileChooser& chooser) {
+        if (chooser.getResult() == juce::File()) {
+            return;
+        }
+
+        settings.setProperty(StateIdentifiers::CorpusPath, chooser.getResult().getFullPathName(), nullptr);
+
+        corpusLoader.analyse();
+    });
+}
+
+void CatKitAudioProcessorEditor::chooseAnalysisToSave()
+{
+    const int flags = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting;
+
+    fileChooser = std::make_unique<juce::FileChooser>("Save the analysis", juce::File(), CorpusAnalysis::analysisFilePattern);
+
+    fileChooser->launchAsync(flags, [this](const juce::FileChooser& chooser) {
+        if (chooser.getResult() == juce::File()) {
+            return;
+        }
+
+        corpusLoader.saveAnalysis(chooser.getResult().withFileExtension("json"));
+    });
+}
+
+void CatKitAudioProcessorEditor::chooseAnalysisToLoad()
 {
     const int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
-    fileChooser = std::make_unique<juce::FileChooser>("Choose a sample", juce::File(), "*.wav;*.aif;*.aiff;*.flac;*.mp3");
+    fileChooser = std::make_unique<juce::FileChooser>("Load an analysis", juce::File(), CorpusAnalysis::analysisFilePattern);
 
-    fileChooser->launchAsync(flags, [this](const juce::FileChooser& chooser) { analyseFile(chooser.getResult()); });
+    fileChooser->launchAsync(flags, [this](const juce::FileChooser& chooser) {
+        if (chooser.getResult() == juce::File()) {
+            return;
+        }
+
+        corpusLoader.loadAnalysis(chooser.getResult());
+    });
 }
 
-void CatKitAudioProcessorEditor::analyseFile(const juce::File& file)
+void CatKitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
-    juce::Component::SafePointer<CatKitAudioProcessorEditor> editor(this);
+    corpusBar.statusLabel.setText(corpusLoader.statusText, juce::dontSendNotification);
 
-    if (file == juce::File()) {
-        return;
+    corpusMap.corpus = corpusPublisher.publishedCorpus;
+    corpusMap.state  = CorpusMap::MapState::Playable;
+
+    if (corpusLoader.state == CorpusLoader::AnalysisState::Analysing) {
+        corpusMap.state = CorpusMap::MapState::Frozen;
     }
 
-    resultLabel.setText("Analysing " + file.getFileName() + "...", juce::dontSendNotification);
+    corpusMap.repaint();
+}
 
-    analysisPool.addJob([editor, file, settings = analysis] {
-        const juce::String summary = SliceAnalysis::summarise(settings.analyse(file));
-
-        juce::MessageManager::callAsync([editor, summary] {
-            if (editor != nullptr) {
-                editor->resultLabel.setText(summary, juce::dontSendNotification);
-            }
-        });
+void CatKitAudioProcessorEditor::timerCallback()
+{
+    audioUIBridge.flashFifo.drain([this](const AudioUIBridge::SliceFlash& flash) {
+        corpusMap.flashSlice(flash.sliceIndex);
     });
+
+    audioUIBridge.puckFifo.drain([this](const AudioUIBridge::LivePuck& puck) {
+        corpusMap.setLivePuck(puck.position, puck.rms, puck.active);
+    });
+
+    corpusMap.updateFlashes();
 }
