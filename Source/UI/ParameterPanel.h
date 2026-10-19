@@ -9,14 +9,14 @@
 
 #include <array>
 
-class ParameterPanel : public Bar, private juce::ValueTree::Listener
+class ParameterPanel : public ArsNovaUI::Bar, private juce::ValueTree::Listener
 {
 public:
     ParameterPanel (juce::ValueTree settings, juce::UndoManager& undoManager);
 
     void resized () override;
 
-    PanelResizer resizer;
+    ArsNovaUI::PanelResizer resizer;
 
     static constexpr int defaultWidth = 260;
     static constexpr int minimumWidth = 220;
@@ -31,25 +31,25 @@ private:
 
     juce::ValueTree                     settings;
     juce::UndoManager&                  undoManager;
-    CaptionLabel                        analysisHeading;
-    CaptionLabel                        slicingModeLabel;
-    ItemSelector                        slicingModeSelector;
-    LabeledEditor                       thresholdEditor;
-    CaptionLabel                        metricLabel;
-    ItemSelector                        metricSelector;
-    LabeledEditor                       minimumSliceEditor;
-    LabeledEditor                       coefficientEditor;
-    LabeledEditor                       neighbourEditor;
-    LabeledEditor                       minimumDistanceEditor;
-    CaptionLabel                        liveMatchingHeading;
-    CaptionLabel                        liveMatchingLabel;
-    ItemSelector                        liveMatchingSelector;
-    LabeledEditor                       gateThresholdEditor;
-    LabeledEditor                       pitchWeightEditor;
-    LabeledEditor                       candidateCountEditor;
-    LabeledEditor                       repetitionPenaltyEditor;
-    CaptionLabel                        playbackHeading;
-    LabeledEditor                       fadeEditor;
-    LabeledEditor                       lengthEditor;
+    ArsNovaUI::CaptionLabel             analysisHeading;
+    ArsNovaUI::CaptionLabel             slicingModeLabel;
+    ArsNovaUI::ItemSelector             slicingModeSelector;
+    ArsNovaUI::LabeledEditor            thresholdEditor;
+    ArsNovaUI::CaptionLabel             metricLabel;
+    ArsNovaUI::ItemSelector             metricSelector;
+    ArsNovaUI::LabeledEditor            minimumSliceEditor;
+    ArsNovaUI::LabeledEditor            coefficientEditor;
+    ArsNovaUI::LabeledEditor            neighbourEditor;
+    ArsNovaUI::LabeledEditor            minimumDistanceEditor;
+    ArsNovaUI::CaptionLabel             liveMatchingHeading;
+    ArsNovaUI::CaptionLabel             liveMatchingLabel;
+    ArsNovaUI::ItemSelector             liveMatchingSelector;
+    ArsNovaUI::LabeledEditor            gateThresholdEditor;
+    ArsNovaUI::LabeledEditor            pitchWeightEditor;
+    ArsNovaUI::LabeledEditor            candidateCountEditor;
+    ArsNovaUI::LabeledEditor            repetitionPenaltyEditor;
+    ArsNovaUI::CaptionLabel             playbackHeading;
+    ArsNovaUI::LabeledEditor            fadeEditor;
+    ArsNovaUI::LabeledEditor            lengthEditor;
     std::array<juce::Rectangle<int>, 3> sectionBounds;
 };

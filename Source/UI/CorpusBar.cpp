@@ -3,17 +3,17 @@
 #include <ArsNovaUI/Theme/CustomLookAndFeel.h>
 
 CorpusBar::CorpusBar()
-    : Bar(Orientation::Horizontal, Theme::contentInsetRatio)
+    : ArsNovaUI::Bar(Orientation::Horizontal, ArsNovaUI::Theme::contentInsetRatio)
 {
-    IconButton& saveButton = analysisPane.addButton(nullptr, "Save the slices and the map to a file", [this] { onSaveAnalysis(); });
-    IconButton& loadButton = analysisPane.addButton(nullptr, "Load slices and a map saved before", [this] { onLoadAnalysis(); });
+    ArsNovaUI::IconButton& saveButton = analysisPane.addButton(nullptr, "Save the slices and the map to a file", [this] { onSaveAnalysis(); });
+    ArsNovaUI::IconButton& loadButton = analysisPane.addButton(nullptr, "Load slices and a map saved before", [this] { onLoadAnalysis(); });
 
     saveButton.setText("Save analysis");
     loadButton.setText("Load analysis");
 
-    filePane.addButton(&CustomLookAndFeel::drawImportIcon, "Load a sample or a folder", [this] { onLoad(); });
-    filePane.addButton(&CustomLookAndFeel::drawReloadIcon, "Analyse again with the current settings", [this] { onAnalyse(); });
-    settingsPane.addButton(&CustomLookAndFeel::drawSettingsIcon, "Settings", [this] { onSettings(); });
+    filePane.addButton(&ArsNovaUI::CustomLookAndFeel::drawImportIcon, "Load a sample or a folder", [this] { onLoad(); });
+    filePane.addButton(&ArsNovaUI::CustomLookAndFeel::drawReloadIcon, "Analyse again with the current settings", [this] { onAnalyse(); });
+    settingsPane.addButton(&ArsNovaUI::CustomLookAndFeel::drawSettingsIcon, "Settings", [this] { onSettings(); });
 
     statusLabel.setJustificationType(juce::Justification::centredLeft);
 
@@ -25,12 +25,12 @@ CorpusBar::CorpusBar()
 
 void CorpusBar::resized()
 {
-    const CustomLookAndFeel& lookAndFeel   = CustomLookAndFeel::get(*this);
-    juce::Rectangle<int>     bounds        = getContentBounds();
-    const int                paneWidth     = filePane.idealWidth(bounds.getHeight());
-    const int                settingsWidth = settingsPane.idealWidth(bounds.getHeight());
+    const ArsNovaUI::CustomLookAndFeel& lookAndFeel   = ArsNovaUI::CustomLookAndFeel::get(*this);
+    juce::Rectangle<int>                bounds        = getContentBounds();
+    const int                           paneWidth     = filePane.idealWidth(bounds.getHeight());
+    const int                           settingsWidth = settingsPane.idealWidth(bounds.getHeight());
 
-    statusLabel.setFont(lookAndFeel.font(Theme::FontStyle::Regular, Theme::textHeight));
+    statusLabel.setFont(lookAndFeel.font(ArsNovaUI::Theme::FontStyle::Regular, ArsNovaUI::Theme::textHeight));
     statusLabel.setColour(juce::Label::textColourId, lookAndFeel.softTextColour);
 
     filePane.setBounds(bounds.removeFromLeft(paneWidth));

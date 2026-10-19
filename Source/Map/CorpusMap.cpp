@@ -12,10 +12,10 @@ CorpusMap::CorpusMap()
 
 void CorpusMap::paint(juce::Graphics& g)
 {
-    CustomLookAndFeel&           lookAndFeel = CustomLookAndFeel::get(*this);
-    const juce::Rectangle<float> area        = getLocalBounds().toFloat().reduced(margin);
-    const juce::AffineTransform  mapToScreen = juce::AffineTransform::scale(area.getWidth(), -area.getHeight()).translated(area.getX(), area.getBottom()).followedBy(viewTransform);
-    CanvasGrid                   grid;
+    ArsNovaUI::CustomLookAndFeel& lookAndFeel = ArsNovaUI::CustomLookAndFeel::get(*this);
+    const juce::Rectangle<float>  area        = getLocalBounds().toFloat().reduced(margin);
+    const juce::AffineTransform   mapToScreen = juce::AffineTransform::scale(area.getWidth(), -area.getHeight()).translated(area.getX(), area.getBottom()).followedBy(viewTransform);
+    ArsNovaUI::CanvasGrid         grid;
 
     grid.bounds         = getLocalBounds().toFloat();
     grid.modelTransform = viewTransform.inverted();

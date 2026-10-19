@@ -7,7 +7,7 @@
 
 #include <functional>
 
-class CorpusBar : public Bar
+class CorpusBar : public ArsNovaUI::Bar
 {
 public:
     CorpusBar();
@@ -24,7 +24,7 @@ public:
     static constexpr int analysisPaneWidth = 240;
 
 private:
-    ButtonPane filePane;
-    ButtonPane analysisPane;
-    ButtonPane settingsPane;
+    ArsNovaUI::ButtonPane filePane;
+    ArsNovaUI::ButtonPane analysisPane;
+    ArsNovaUI::ButtonPane settingsPane;
 };

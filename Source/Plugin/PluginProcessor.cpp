@@ -138,7 +138,7 @@ void CatKitAudioProcessor::setStateInformation(const void* data, int sizeInBytes
         settings.setProperty(property, restored[property], nullptr);
     }
 
-    colourPresets.copyPropertiesAndChildrenFrom(restored.getChildWithName(InterfaceIdentifiers::ColourPresets), nullptr);
+    colourPresets.copyPropertiesAndChildrenFrom(restored.getChildWithName(ArsNovaUI::InterfaceIdentifiers::ColourPresets), nullptr);
 
     undoManager.clearUndoHistory();
 

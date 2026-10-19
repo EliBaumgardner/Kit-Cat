@@ -24,16 +24,16 @@ CatKitAudioProcessorEditor::CatKitAudioProcessorEditor(CatKitAudioProcessor& aud
 
     interfaceSettings = std::make_unique<juce::PropertiesFile>(interfaceSettingsOptions);
 
-    if (interfaceSettings->containsKey(InterfaceIdentifiers::ThemeColour.toString())) {
-        lookAndFeel.applyThemeColour(juce::Colour::fromString(interfaceSettings->getValue(InterfaceIdentifiers::ThemeColour.toString())));
+    if (interfaceSettings->containsKey(ArsNovaUI::InterfaceIdentifiers::ThemeColour.toString())) {
+        lookAndFeel.applyThemeColour(juce::Colour::fromString(interfaceSettings->getValue(ArsNovaUI::InterfaceIdentifiers::ThemeColour.toString())));
     }
 
     setLookAndFeel(&lookAndFeel);
 
-    scaledView = std::make_unique<ScaledView>(workspace, *interfaceSettings);
+    scaledView = std::make_unique<ArsNovaUI::ScaledView>(workspace, *interfaceSettings);
 
-    scaledView->minimumContentSize = { Theme::windowGutter * 3 + ParameterPanel::minimumWidth + minimumMapWidth, Theme::windowGutter * 3 + Theme::barHeight + minimumMapHeight };
-    settingsLauncher.openingScale  = SettingsMenu::openingScale;
+    scaledView->minimumContentSize = { ArsNovaUI::Theme::windowGutter * 3 + ParameterPanel::minimumWidth + minimumMapWidth, ArsNovaUI::Theme::windowGutter * 3 + ArsNovaUI::Theme::barHeight + minimumMapHeight };
+    settingsLauncher.openingScale  = ArsNovaUI::SettingsMenu::openingScale;
 
     corpusBar.onLoad         = [this] { chooseCorpus(); };
     corpusBar.onAnalyse      = [this] { corpusLoader.analyse(); };
@@ -42,8 +42,8 @@ CatKitAudioProcessorEditor::CatKitAudioProcessorEditor(CatKitAudioProcessor& aud
 
     corpusBar.onSettings = [this] {
         settingsLauncher.show(corpusBar, [this] {
-            std::unique_ptr<SettingsMenu> content = std::make_unique<SettingsMenu>(lookAndFeel, *interfaceSettings, *scaledView, colourPresets, undoManager);
-            const juce::Point<int>        size    = content->narrowestSize();
+            std::unique_ptr<ArsNovaUI::SettingsMenu> content = std::make_unique<ArsNovaUI::SettingsMenu>(lookAndFeel, *interfaceSettings, *scaledView, colourPresets, undoManager);
+            const juce::Point<int>                   size    = content->narrowestSize();
 
             content->setSize(size.x, size.y);
 
@@ -107,15 +107,15 @@ void CatKitAudioProcessorEditor::resized()
 {
     scaledView->setBounds(getLocalBounds());
 
-    juce::Rectangle<int> bounds      = workspace.getLocalBounds().reduced(Theme::windowGutter);
-    const int            widestPanel = juce::jmax(ParameterPanel::minimumWidth, juce::jmin(ParameterPanel::maximumWidth, bounds.getWidth() - Theme::windowGutter - minimumMapWidth));
+    juce::Rectangle<int> bounds      = workspace.getLocalBounds().reduced(ArsNovaUI::Theme::windowGutter);
+    const int            widestPanel = juce::jmax(ParameterPanel::minimumWidth, juce::jmin(ParameterPanel::maximumWidth, bounds.getWidth() - ArsNovaUI::Theme::windowGutter - minimumMapWidth));
 
     panelWidth = juce::jlimit(ParameterPanel::minimumWidth, widestPanel, panelWidth);
 
-    corpusBar.setBounds(bounds.removeFromTop(Theme::barHeight));
-    bounds.removeFromTop(Theme::windowGutter);
+    corpusBar.setBounds(bounds.removeFromTop(ArsNovaUI::Theme::barHeight));
+    bounds.removeFromTop(ArsNovaUI::Theme::windowGutter);
     parameterPanel.setBounds(bounds.removeFromRight(panelWidth));
-    bounds.removeFromRight(Theme::windowGutter);
+    bounds.removeFromRight(ArsNovaUI::Theme::windowGutter);
     corpusMap.setBounds(bounds);
 }
 

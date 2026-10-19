@@ -7,8 +7,8 @@
 #include <vector>
 
 ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undoManager)
-    : Bar(Orientation::Vertical, Theme::contentInsetRatio),
-      resizer(PanelResizer::Edge::Left),
+    : ArsNovaUI::Bar(Orientation::Vertical, ArsNovaUI::Theme::contentInsetRatio),
+      resizer(ArsNovaUI::PanelResizer::Edge::Left),
       settings(settings),
       undoManager(undoManager),
       slicingModeSelector(undoManager),
@@ -28,9 +28,9 @@ ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undo
 {
     const juce::StringArray       metricNames { "Energy", "High frequency content", "Spectral flux", "Modified Kullback-Leibler", "Itakura-Saito", "Cosine",
                                                 "Phase deviation", "Weighted phase deviation", "Complex deviation", "Rectified complex deviation" };
-    std::unique_ptr<NumberFormat> fadeFormat = std::make_unique<NumberFormat>(1.0, 100.0);
-    std::unique_ptr<NumberFormat> lengthFormat = std::make_unique<NumberFormat>(0.0, 10000.0);
-    std::unique_ptr<NumberFormat> gateFormat = std::make_unique<NumberFormat>(-80.0, 0.0, 1);
+    std::unique_ptr<ArsNovaUI::NumberFormat> fadeFormat = std::make_unique<ArsNovaUI::NumberFormat>(1.0, 100.0);
+    std::unique_ptr<ArsNovaUI::NumberFormat> lengthFormat = std::make_unique<ArsNovaUI::NumberFormat>(0.0, 10000.0);
+    std::unique_ptr<ArsNovaUI::NumberFormat> gateFormat = std::make_unique<ArsNovaUI::NumberFormat>(-80.0, 0.0, 1);
 
     fadeFormat->suffix   = " ms";
     lengthFormat->suffix = " ms";
@@ -56,16 +56,16 @@ ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undo
     fadeEditor.label.setText("Crossfade", juce::dontSendNotification);
     lengthEditor.label.setText("Slice length", juce::dontSendNotification);
 
-    thresholdEditor.editor.setFormat(std::make_unique<NumberFormat>(0.0, 10.0, 2));
-    minimumSliceEditor.editor.setFormat(std::make_unique<NumberFormat>(1.0, 999.0));
-    coefficientEditor.editor.setFormat(std::make_unique<NumberFormat>(2.0, 40.0));
-    neighbourEditor.editor.setFormat(std::make_unique<NumberFormat>(2.0, 99.0));
-    minimumDistanceEditor.editor.setFormat(std::make_unique<NumberFormat>(0.0, 1.0, 2));
+    thresholdEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(0.0, 10.0, 2));
+    minimumSliceEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(1.0, 999.0));
+    coefficientEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(2.0, 40.0));
+    neighbourEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(2.0, 99.0));
+    minimumDistanceEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(0.0, 1.0, 2));
 
     gateThresholdEditor.editor.setFormat(std::move(gateFormat));
-    pitchWeightEditor.editor.setFormat(std::make_unique<NumberFormat>(0.0, 1.0, 2));
-    candidateCountEditor.editor.setFormat(std::make_unique<NumberFormat>(1.0, 8.0));
-    repetitionPenaltyEditor.editor.setFormat(std::make_unique<NumberFormat>(0.0, 1.0, 2));
+    pitchWeightEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(0.0, 1.0, 2));
+    candidateCountEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(1.0, 8.0));
+    repetitionPenaltyEditor.editor.setFormat(std::make_unique<ArsNovaUI::NumberFormat>(0.0, 1.0, 2));
 
     fadeEditor.editor.setFormat(std::move(fadeFormat));
     lengthEditor.editor.setFormat(std::move(lengthFormat));
@@ -132,14 +132,14 @@ ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undo
 
 void ParameterPanel::resized()
 {
-    const CustomLookAndFeel&                           lookAndFeel  = CustomLookAndFeel::get(*this);
-    const juce::Font                                   font         = lookAndFeel.font(Theme::FontStyle::Regular, Theme::textHeight);
-    const juce::Font                                   headingFont  = lookAndFeel.font(Theme::FontStyle::SemiBold, Theme::textHeight);
-    const int                                          rowHeight    = juce::roundToInt(Theme::barHeight * Theme::menuRowHeightRatio);
-    const int                                          spacing      = juce::roundToInt(Theme::barHeight * Theme::menuSpacingRatio);
-    const std::array<CaptionLabel*, 3>                 headings     { &analysisHeading, &liveMatchingHeading, &playbackHeading };
-    const std::array<CaptionLabel*, 3>                 captions     { &slicingModeLabel, &metricLabel, &liveMatchingLabel };
-    const std::array<LabeledEditor*, 11>               editors      { &thresholdEditor, &minimumSliceEditor, &coefficientEditor, &neighbourEditor, &minimumDistanceEditor,
+    const ArsNovaUI::CustomLookAndFeel&                lookAndFeel  = ArsNovaUI::CustomLookAndFeel::get(*this);
+    const juce::Font                                   font         = lookAndFeel.font(ArsNovaUI::Theme::FontStyle::Regular, ArsNovaUI::Theme::textHeight);
+    const juce::Font                                   headingFont  = lookAndFeel.font(ArsNovaUI::Theme::FontStyle::SemiBold, ArsNovaUI::Theme::textHeight);
+    const int                                          rowHeight    = juce::roundToInt(ArsNovaUI::Theme::barHeight * ArsNovaUI::Theme::menuRowHeightRatio);
+    const int                                          spacing      = juce::roundToInt(ArsNovaUI::Theme::barHeight * ArsNovaUI::Theme::menuSpacingRatio);
+    const std::array<ArsNovaUI::CaptionLabel*, 3>      headings     { &analysisHeading, &liveMatchingHeading, &playbackHeading };
+    const std::array<ArsNovaUI::CaptionLabel*, 3>      captions     { &slicingModeLabel, &metricLabel, &liveMatchingLabel };
+    const std::array<ArsNovaUI::LabeledEditor*, 11>    editors      { &thresholdEditor, &minimumSliceEditor, &coefficientEditor, &neighbourEditor, &minimumDistanceEditor,
                                                                       &gateThresholdEditor, &pitchWeightEditor, &candidateCountEditor, &repetitionPenaltyEditor,
                                                                       &fadeEditor, &lengthEditor };
     const std::array<std::vector<juce::Component*>, 3> sectionRows  { std::vector<juce::Component*> { &slicingModeSelector, &thresholdEditor, &metricSelector, &minimumSliceEditor,
@@ -147,24 +147,24 @@ void ParameterPanel::resized()
                                                                       std::vector<juce::Component*> { &liveMatchingSelector, &gateThresholdEditor, &pitchWeightEditor,
                                                                                                         &candidateCountEditor, &repetitionPenaltyEditor },
                                                                       std::vector<juce::Component*> { &fadeEditor, &lengthEditor } };
-    juce::Rectangle<int>                               bounds       = getLocalBounds().reduced(Theme::windowGutter);
+    juce::Rectangle<int>                               bounds       = getLocalBounds().reduced(ArsNovaUI::Theme::windowGutter);
 
-    resizer.setBounds(getLocalBounds().removeFromLeft(Theme::windowGutter));
+    resizer.setBounds(getLocalBounds().removeFromLeft(ArsNovaUI::Theme::windowGutter));
 
-    for (CaptionLabel* heading : headings) {
+    for (ArsNovaUI::CaptionLabel* heading : headings) {
         heading->setFont(headingFont);
         heading->setColour(juce::Label::textColourId, lookAndFeel.textColour);
     }
 
-    for (CaptionLabel* caption : captions) {
+    for (ArsNovaUI::CaptionLabel* caption : captions) {
         caption->setFont(font);
         caption->setColour(juce::Label::textColourId, lookAndFeel.softTextColour);
     }
 
-    for (LabeledEditor* editor : editors) {
+    for (ArsNovaUI::LabeledEditor* editor : editors) {
         editor->label.setFont(font);
         editor->label.setColour(juce::Label::textColourId, lookAndFeel.softTextColour);
-        editor->editor.setFontHeight(Theme::textHeight);
+        editor->editor.setFontHeight(ArsNovaUI::Theme::textHeight);
         editor->labelWidth = labelWidth;
         editor->gap        = spacing;
     }
@@ -198,7 +198,7 @@ void ParameterPanel::resized()
 
 void ParameterPanel::paintOverBar(juce::Graphics& graphics)
 {
-    CustomLookAndFeel& lookAndFeel = CustomLookAndFeel::get(*this);
+    ArsNovaUI::CustomLookAndFeel& lookAndFeel = ArsNovaUI::CustomLookAndFeel::get(*this);
 
     for (const juce::Rectangle<int>& section : sectionBounds) {
         lookAndFeel.drawPane(graphics, section.toFloat());

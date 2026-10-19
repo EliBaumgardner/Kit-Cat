@@ -46,7 +46,7 @@ public:
 
     juce::UndoManager   undoManager;
     juce::ValueTree     settings { StateIdentifiers::CatKitState };
-    juce::ValueTree     colourPresets { InterfaceIdentifiers::ColourPresets };
+    juce::ValueTree     colourPresets { ArsNovaUI::InterfaceIdentifiers::ColourPresets };
     CorpusPublisher     corpusPublisher;
     SlicePlayer         slicePlayer;
     CorpusLoader        corpusLoader;
