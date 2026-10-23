@@ -1,94 +1,52 @@
 # Kit-Cat
 
-Kit-Cat is a real-time audio mosaicing instrument. Give it a folder of sounds and play or sing into it, and it answers with the pieces of those sounds that most resemble what you just did.
+Kit-Cat is a real-time audio mosaicing instrument: it rebuilds a live input out of short pieces of your own samples. You give it a folder of sounds and play or sing into it, and about 170 times a second it plays the piece of those sounds that most resembles the input's timbre and pitch. A voice fed into a corpus of drum hits comes out as drum hits that rise and fall with the voice. Nothing of the input itself is heard.
 
-It doesn't process your input. It **replaces** it. Every sound you hear comes from your samples, chosen about 170 times a second to follow the timbre and pitch of the input. A voice fed into a corpus of drum hits comes out as a stream of drum hits that rises and falls with the voice. The same corpus also appears as a map you can play with the mouse.
-
-It runs as a standalone app, an AU and a VST3, and is written in C++20 with [JUCE](https://juce.com/) and [FluCoMa](https://www.flucoma.org/).
+It runs as a standalone app, an AU and a VST3, written in C++20 with [JUCE](https://juce.com/) and [FluCoMa](https://www.flucoma.org/).
 
 ## How it works
 
-```
- your samples ──► cut into slices ──► describe each one ──► lay them out on a map
-                                      (timbre + pitch)       (similar sounds sit together)
+1. **Analysis.** Loading a corpus cuts each file into slices, either at the start of each sound or as fixed 60 ms grains. Each slice's timbre and pitch are measured, and the slices are laid out on a 2D map with similar sounds close together. This runs in the background and takes a few seconds.
+2. **Matching.** Every 5.8 ms, the last 23 ms of input is measured the same way, and one of the closest slices starts as a short grain. The grains overlap, so the output is continuous.
+3. **The map.** Each slice is a dot, coloured by its position, so similar sounds share a colour. A puck marks where the live input lands and the dots that answer it flash. Dragging the mouse across the map plays the nearest dot, crossfading from one to the next. Scroll pans, pinch or Shift+scroll zooms around the cursor, and a double-click shows the whole map.
 
- live input ──► describe the last 23 ms ──► find the closest slices ──► play one as a grain
-                (every 5.8 ms)
-```
-
-1. **Analysis.** When you load a corpus, Kit-Cat cuts each file into slices, at the start of each sound or as short fixed grains. It measures every slice's timbre (MFCCs) and pitch, then arranges the slices on a 2D map so that similar sounds sit near each other. This takes a few seconds and runs in the background.
-2. **Matching.** While input plays, Kit-Cat describes the last 23 ms of it in the same terms. It looks up the closest-sounding slices and starts one of them as a short grain, every 5.8 ms. Many grains overlap, so the result is continuous.
-3. **The map.** Each slice is a dot, coloured by where it sits, so nearby (similar-sounding) dots share a colour. A spinner shows on the map while a corpus is being analysed. While live input plays, a puck shows where the input lands among them, and the dots that answer it flash. Dragging the mouse across the map plays the nearest dot. Scrolling pans the map, and pinching or Shift+scrolling zooms in around the cursor, which spreads a dense cluster apart without enlarging its dots; a double-click shows the whole map again.
+Live input and the map can play at the same time.
 
 ## Getting started
 
 1. Build and launch the standalone app (see [Building](#building)).
-2. Open **Options → Audio/MIDI Settings** and pick your microphone or interface as the input.
-3. Click the **load** button and choose a sample or a folder of samples. The dots appear once analysis finishes.
+2. In **Options → Audio/MIDI Settings**, choose your microphone or interface as the input.
+3. Click **Load a sample or a folder** and pick your samples. The dots appear when analysis finishes.
 4. Set **Match live input** to **On** and make a sound.
 
-Short, varied material works best as a corpus: drums, percussion, speech, textures, or a few minutes of an instrument played many different ways. A single sustained note gives the matcher little to choose from.
-
-## Two ways to play
-
-| | Live input | The map |
-|---|---|---|
-| **You play it with** | A microphone or any audio input | The mouse: press and drag across the dots |
-| **What sounds** | Grains of the slices closest to the input, overlapping | One slice at a time, crossfading to the next dot you reach |
-| **Best for** | Performing, re-voicing a part, call-and-response | Exploring a corpus and hearing how it is organised |
-
-Both can run at once.
+Short, varied material makes the best corpus: drums, speech, textures, or an instrument played many ways. A single sustained note leaves little to choose from.
 
 ## Settings
 
-Analysis settings take effect when you click **Analyse again**. Live and playback settings take effect immediately.
-
-**Analysis**
+Analysis settings apply when you click **Analyse again with the current settings**; the others apply immediately.
 
 | Setting | What it does |
 |---|---|
-| Slicing mode | **Onset** cuts at the start of each sound. **Granular** cuts 60 ms grains every 30 ms, which suits sustained material. |
-| Onset threshold, Onset metric | How strong a change must be to count as a new sound, and which kind of change counts (energy, spectral flux, and others). |
-| Shortest slice | The shortest slice, in analysis hops (about 12 ms each). |
-| MFCC coefficients | How much detail the timbre description keeps. |
-| Map neighbours, Map minimum distance | The shape of the map. More neighbours favours the overall layout; a smaller minimum distance packs similar sounds tighter. |
+| **Analysis** | |
+| Slicing mode | **Onset** cuts at the start of each sound. **Granular** cuts 60 ms grains every 30 ms, for sustained material. |
+| Onset threshold, Onset metric | How large a change starts a new slice, and which kind of change is measured. |
+| Shortest slice (hops) | The minimum slice length, in steps of about 12 ms. |
+| MFCC coefficients | How much detail the timbre measurement keeps. |
+| Map neighbours, Map minimum distance | The map's shape: more neighbours keeps the overall layout, a smaller distance packs similar sounds tighter. |
+| **Live input** | |
+| Match live input | Turns matching on or off. |
+| Input gate | Input below this level, in dB, plays nothing. |
+| Pitch weight | 0 matches timbre only; 1 weighs pitch as much as possible. |
+| Variation (Top-K) | How many of the closest slices to pick from at random. 1 always plays the closest. |
+| Repetition penalty | How strongly to avoid slices from the last few grains. |
+| **Playback** | |
+| Crossfade | The fade between dots when playing the map with the mouse. |
 
-**Live input**
-
-| Setting | What it does |
-|---|---|
-| Match live input | Turns live matching on or off. |
-| Input gate | Input quieter than this (in dB) plays nothing. |
-| Pitch weight | 0 matches on timbre alone; 1 matches on pitch as much as possible. |
-| Variation | How many of the closest slices to choose among at random. 1 always plays the single closest. |
-| Repetition penalty | How strongly to avoid slices played in the last few grains. |
-
-**Playback**
-
-| Setting | What it does |
-|---|---|
-| Crossfade | The fade between slices when playing the map with the mouse. |
-
-**Interface** (the settings button at the top right; saved on this computer, not in the project)
-
-| Setting | What it does |
-|---|---|
-| Theme colour | The colour the whole interface is tinted from. |
-| Interface zoom | The size of every button, label and bar, from 1x to 2x. |
-
-**Save analysis** and **Load analysis** store the slices and the map, so a large corpus doesn't need analysing again. Keep the analysis file next to its corpus folder and the pair can be moved anywhere together.
-
-## Under the hood
-
-The analysis uses FluCoMa's algorithms on a background thread. The live engine runs entirely on the audio thread and never allocates, locks or waits. A RealtimeSanitizer test checks that guarantee for everything `processBlock` reaches.
-
-The closest-slice search is a KD-tree that stays exact when timbre and pitch are blended. The live pitch tracker is a port of FluCoMa's YIN-FFT that does no allocation, and grains start on the exact sample their input hop ended. From an input onset to a grain starting is at most 5.8 ms, plus your interface's buffers.
-
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) covers the threads, the matching distance, which parts are FluCoMa's and which are written here, the latency in detail, and the tests.
+The settings button at the top right holds the theme colour and interface zoom, saved on this computer rather than in the project. **Save** and **Load analysis** store the slices and map so a large corpus isn't analysed twice; keep the file beside its corpus folder.
 
 ## Building
 
-You need macOS, CMake 3.28 or later, and Ninja. FluCoMa's own dependencies are downloaded the first time you configure.
+Requires macOS, CMake 3.28 or later, and Ninja. FluCoMa's dependencies download on the first configure.
 
 ```bash
 git clone https://github.com/EliBaumgardner/Kit-Cat.git
@@ -98,15 +56,17 @@ cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build --target KitCat_Standalone
 ```
 
-The app is built into `build/KitCat_artefacts/Release/Standalone/`. Building `KitCat_AU` or `KitCat_VST3` also installs the plugin into `~/Library/Audio/Plug-Ins`. `ctest --test-dir build` runs the tests once `KitCat_Tests` is built.
+The app lands in `build/KitCat_artefacts/Release/Standalone/`. `KitCat_AU` and `KitCat_VST3` also install into `~/Library/Audio/Plug-Ins`. Build `KitCat_Tests`, then run `ctest --test-dir build`.
+
+The live engine runs on the audio thread without allocating, locking or waiting, which a RealtimeSanitizer test checks. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) covers the threads, the matching, latency and tests.
 
 ## Limitations
 
 - Built and tested on macOS (Apple Silicon) only.
-- Live input has been tested in the standalone app. Whether a DAW lets an instrument plugin receive audio, and how you route it, depends on the host.
-- Pitch matching is coarse below about 200 Hz: the live window is 23 ms long, and a pure 220 Hz tone reads about a third of a semitone sharp.
-- Grains fade in over half their length, so a long grain softens the attack of what you play.
+- Live input is tested in the standalone app. Routing audio into an instrument plugin depends on the host.
+- Pitch matching is coarse below about 200 Hz: a 23 ms window reads a 220 Hz tone about a third of a semitone sharp.
+- Grains fade in over half their length, softening the attack of what you play.
 
 ## Credits
 
-Analysis algorithms from [FluCoMa](https://www.flucoma.org/) (Fluid Corpus Manipulation, University of Huddersfield). Plugin framework [JUCE](https://juce.com/). Interface components from [ArsNovaUI](https://github.com/EliBaumgardner/ArsNovaUI). Tests use [Catch2](https://github.com/catchorg/Catch2).
+Analysis from [FluCoMa](https://www.flucoma.org/) (University of Huddersfield), framework [JUCE](https://juce.com/), interface components [ArsNovaUI](https://github.com/EliBaumgardner/ArsNovaUI), tests [Catch2](https://github.com/catchorg/Catch2).
