@@ -5,7 +5,7 @@
 class StateIdentifiers
 {
 public:
-    static const juce::Identifier CatKitState;
+    static const juce::Identifier KitCatState;
     static const juce::Identifier CorpusPath;
 
     static const juce::Identifier OnsetThreshold;

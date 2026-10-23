@@ -21,7 +21,7 @@ jobs:
         run: cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 
       - name: Build
-        run: cmake --build build --target CatKit_Standalone CatKit_VST3 CatKit_AU CatKitProbe CatKit_Tests
+        run: cmake --build build --target KitCat_Standalone KitCat_VST3 KitCat_AU KitCatProbe KitCat_Tests
 
       - name: Test
         run: ctest --test-dir build --output-on-failure

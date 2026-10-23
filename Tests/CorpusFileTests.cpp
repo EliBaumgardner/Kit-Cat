@@ -4,7 +4,7 @@
 
 struct TemporaryFolder
 {
-    juce::File folder = juce::File::getSpecialLocation(juce::File::tempDirectory).getNonexistentChildFile("CatKitCorpusFileTests", "", false);
+    juce::File folder = juce::File::getSpecialLocation(juce::File::tempDirectory).getNonexistentChildFile("KitCatCorpusFileTests", "", false);
 
     ~TemporaryFolder()
     {

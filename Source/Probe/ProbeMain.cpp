@@ -8,7 +8,7 @@ int main(int argumentCount, char* arguments[])
     CorpusAnalysis::Result result;
 
     if (argumentCount < 2) {
-        std::cout << "usage: CatKitProbe <audio file or folder>\n";
+        std::cout << "usage: KitCatProbe <audio file or folder>\n";
         return 1;
     }
 

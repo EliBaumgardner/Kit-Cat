@@ -1,7 +1,7 @@
 #include "Plugin/PluginProcessor.h"
 #include "Plugin/PluginEditor.h"
 
-CatKitAudioProcessor::CatKitAudioProcessor()
+KitCatAudioProcessor::KitCatAudioProcessor()
     : AudioProcessor(BusesProperties()
                          .withInput("Input", juce::AudioChannelSet::stereo(), true)
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)),
@@ -32,7 +32,7 @@ CatKitAudioProcessor::CatKitAudioProcessor()
     settings.setProperty(StateIdentifiers::RepetitionPenalty, repetitionPenalty.load(), nullptr);
 }
 
-void CatKitAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
+void KitCatAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 {
     slicePlayer.prepare(sampleRate);
     targetAnalyser.prepare(sampleRate, targetWindowSize, targetHopSize, SliceAnalysis().bandCount, static_cast<int>(settings[StateIdentifiers::CoefficientCount]));
@@ -43,11 +43,11 @@ void CatKitAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     hopCounter    = 0;
 }
 
-void CatKitAudioProcessor::releaseResources()
+void KitCatAudioProcessor::releaseResources()
 {
 }
 
-void CatKitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) noexcept [[clang::nonblocking]]
+void KitCatAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) noexcept [[clang::nonblocking]]
 {
     juce::ScopedNoDenormals     noDenormals;
     CorpusPublisher::BlockScope block { corpusPublisher };
@@ -100,15 +100,15 @@ void CatKitAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::
     slicePlayer.render(buffer, block.corpus);
 }
 
-void CatKitAudioProcessor::setCurrentProgram(int index)
+void KitCatAudioProcessor::setCurrentProgram(int index)
 {
 }
 
-void CatKitAudioProcessor::changeProgramName(int index, const juce::String& newName)
+void KitCatAudioProcessor::changeProgramName(int index, const juce::String& newName)
 {
 }
 
-void CatKitAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
+void KitCatAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
     juce::ValueTree state = settings.createCopy();
 
@@ -119,7 +119,7 @@ void CatKitAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
     copyXmlToBinary(*xml, destData);
 }
 
-void CatKitAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
+void KitCatAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     const std::unique_ptr<juce::XmlElement> xml = getXmlFromBinary(data, sizeInBytes);
     juce::ValueTree                         restored;
@@ -128,7 +128,7 @@ void CatKitAudioProcessor::setStateInformation(const void* data, int sizeInBytes
         restored = juce::ValueTree::fromXml(*xml);
     }
 
-    if (! restored.hasType(StateIdentifiers::CatKitState)) {
+    if (! restored.hasType(StateIdentifiers::KitCatState)) {
         return;
     }
 
@@ -145,7 +145,7 @@ void CatKitAudioProcessor::setStateInformation(const void* data, int sizeInBytes
     corpusLoader.analyse();
 }
 
-bool CatKitAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
+bool KitCatAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const
 {
     const juce::AudioChannelSet output = layouts.getMainOutputChannelSet();
     const juce::AudioChannelSet input  = layouts.getMainInputChannelSet();
@@ -161,57 +161,57 @@ bool CatKitAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) co
     return true;
 }
 
-bool CatKitAudioProcessor::hasEditor() const
+bool KitCatAudioProcessor::hasEditor() const
 {
     return true;
 }
 
-bool CatKitAudioProcessor::acceptsMidi() const
+bool KitCatAudioProcessor::acceptsMidi() const
 {
     return true;
 }
 
-bool CatKitAudioProcessor::producesMidi() const
+bool KitCatAudioProcessor::producesMidi() const
 {
     return false;
 }
 
-bool CatKitAudioProcessor::isMidiEffect() const
+bool KitCatAudioProcessor::isMidiEffect() const
 {
     return false;
 }
 
-juce::AudioProcessorEditor* CatKitAudioProcessor::createEditor()
+juce::AudioProcessorEditor* KitCatAudioProcessor::createEditor()
 {
-    return new CatKitAudioProcessorEditor(*this);
+    return new KitCatAudioProcessorEditor(*this);
 }
 
-const juce::String CatKitAudioProcessor::getName() const
+const juce::String KitCatAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-const juce::String CatKitAudioProcessor::getProgramName(int index)
+const juce::String KitCatAudioProcessor::getProgramName(int index)
 {
     return {};
 }
 
-double CatKitAudioProcessor::getTailLengthSeconds() const
+double KitCatAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int CatKitAudioProcessor::getNumPrograms()
+int KitCatAudioProcessor::getNumPrograms()
 {
     return 1;
 }
 
-int CatKitAudioProcessor::getCurrentProgram()
+int KitCatAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void CatKitAudioProcessor::valueTreePropertyChanged(juce::ValueTree& tree, const juce::Identifier& property)
+void KitCatAudioProcessor::valueTreePropertyChanged(juce::ValueTree& tree, const juce::Identifier& property)
 {
     if (property == StateIdentifiers::FadeMilliseconds) {
         slicePlayer.fadeSeconds.store(static_cast<double>(tree[property]) / 1000.0);
@@ -244,5 +244,5 @@ void CatKitAudioProcessor::valueTreePropertyChanged(juce::ValueTree& tree, const
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new CatKitAudioProcessor();
+    return new KitCatAudioProcessor();
 }

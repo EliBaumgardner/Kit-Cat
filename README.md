@@ -1,6 +1,6 @@
-# Cat-Kit
+# Kit-Cat
 
-Cat-Kit is a real-time audio mosaicing instrument. Give it a folder of sounds and play or sing into it, and it answers with the pieces of those sounds that most resemble what you just did.
+Kit-Cat is a real-time audio mosaicing instrument. Give it a folder of sounds and play or sing into it, and it answers with the pieces of those sounds that most resemble what you just did.
 
 It doesn't process your input. It **replaces** it. Every sound you hear comes from your samples, chosen about 170 times a second to follow the timbre and pitch of the input. A voice fed into a corpus of drum hits comes out as a stream of drum hits that rises and falls with the voice. The same corpus also appears as a map you can play with the mouse.
 
@@ -16,8 +16,8 @@ It runs as a standalone app, an AU and a VST3, and is written in C++20 with [JUC
                 (every 5.8 ms)
 ```
 
-1. **Analysis.** When you load a corpus, Cat-Kit cuts each file into slices, at the start of each sound or as short fixed grains. It measures every slice's timbre (MFCCs) and pitch, then arranges the slices on a 2D map so that similar sounds sit near each other. This takes a few seconds and runs in the background.
-2. **Matching.** While input plays, Cat-Kit describes the last 23 ms of it in the same terms. It looks up the closest-sounding slices and starts one of them as a short grain, every 5.8 ms. Many grains overlap, so the result is continuous.
+1. **Analysis.** When you load a corpus, Kit-Cat cuts each file into slices, at the start of each sound or as short fixed grains. It measures every slice's timbre (MFCCs) and pitch, then arranges the slices on a 2D map so that similar sounds sit near each other. This takes a few seconds and runs in the background.
+2. **Matching.** While input plays, Kit-Cat describes the last 23 ms of it in the same terms. It looks up the closest-sounding slices and starts one of them as a short grain, every 5.8 ms. Many grains overlap, so the result is continuous.
 3. **The map.** Each slice is a dot, coloured by where it sits, so nearby (similar-sounding) dots share a colour. A spinner shows on the map while a corpus is being analysed. While live input plays, a puck shows where the input lands among them, and the dots that answer it flash. Dragging the mouse across the map plays the nearest dot. Scrolling pans the map, and pinching or Shift+scrolling zooms in around the cursor, which spreads a dense cluster apart without enlarging its dots; a double-click shows the whole map again.
 
 ## Getting started
@@ -91,14 +91,14 @@ The closest-slice search is a KD-tree that stays exact when timbre and pitch are
 You need macOS, CMake 3.28 or later, and Ninja. FluCoMa's own dependencies are downloaded the first time you configure.
 
 ```bash
-git clone https://github.com/EliBaumgardner/Cat-Kit.git
-cd Cat-Kit
+git clone https://github.com/EliBaumgardner/Kit-Cat.git
+cd Kit-Cat
 git submodule update --init
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build --target CatKit_Standalone
+cmake --build build --target KitCat_Standalone
 ```
 
-The app is built into `build/CatKit_artefacts/Release/Standalone/`. Building `CatKit_AU` or `CatKit_VST3` also installs the plugin into `~/Library/Audio/Plug-Ins`. `ctest --test-dir build` runs the tests once `CatKit_Tests` is built.
+The app is built into `build/KitCat_artefacts/Release/Standalone/`. Building `KitCat_AU` or `KitCat_VST3` also installs the plugin into `~/Library/Audio/Plug-Ins`. `ctest --test-dir build` runs the tests once `KitCat_Tests` is built.
 
 ## Limitations
 

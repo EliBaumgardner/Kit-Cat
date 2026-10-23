@@ -11,7 +11,7 @@ TEST_CASE("processBlock stays realtime-safe while matching live input, browsing,
     constexpr int    blockSize  = 512;
     constexpr int    blockCount = 600;
 
-    CatKitAudioProcessor     processor;
+    KitCatAudioProcessor     processor;
     juce::AudioBuffer<float> buffer(2, blockSize);
     juce::MidiBuffer         midi;
     double                   phase   = 0.0;

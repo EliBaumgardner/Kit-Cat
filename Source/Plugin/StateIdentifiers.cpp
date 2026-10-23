@@ -1,6 +1,6 @@
 #include "Plugin/StateIdentifiers.h"
 
-const juce::Identifier StateIdentifiers::CatKitState { "CatKitState" };
+const juce::Identifier StateIdentifiers::KitCatState { "KitCatState" };
 const juce::Identifier StateIdentifiers::CorpusPath { "CorpusPath" };
 
 const juce::Identifier StateIdentifiers::OnsetThreshold { "OnsetThreshold" };

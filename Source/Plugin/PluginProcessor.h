@@ -15,10 +15,10 @@
 #include <array>
 #include <atomic>
 
-class CatKitAudioProcessor : public juce::AudioProcessor, private juce::ValueTree::Listener
+class KitCatAudioProcessor : public juce::AudioProcessor, private juce::ValueTree::Listener
 {
 public:
-    CatKitAudioProcessor();
+    KitCatAudioProcessor();
 
     void prepareToPlay       (double sampleRate, int samplesPerBlock) override;
     void releaseResources    () override;
@@ -45,7 +45,7 @@ public:
     int getCurrentProgram () override;
 
     juce::UndoManager   undoManager;
-    juce::ValueTree     settings { StateIdentifiers::CatKitState };
+    juce::ValueTree     settings { StateIdentifiers::KitCatState };
     juce::ValueTree     colourPresets { ArsNovaUI::InterfaceIdentifiers::ColourPresets };
     CorpusPublisher     corpusPublisher;
     SlicePlayer         slicePlayer;

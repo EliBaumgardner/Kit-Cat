@@ -70,7 +70,7 @@ CorpusAnalysis::Result CorpusAnalysis::load(const juce::File& analysisFile) cons
     Result                        result;
 
     if (files == nullptr || slices == nullptr || static_cast<int>(json["version"]) != analysisFileVersion) {
-        result.error = analysisFile.getFileName() + " is not a Cat-Kit analysis";
+        result.error = analysisFile.getFileName() + " is not a Kit-Cat analysis";
         return result;
     }
 

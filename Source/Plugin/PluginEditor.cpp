@@ -4,7 +4,7 @@
 #include <ArsNovaUI/Menus/SettingsMenu.h>
 #include <ArsNovaUI/Theme/InterfaceIdentifiers.h>
 
-CatKitAudioProcessorEditor::CatKitAudioProcessorEditor(CatKitAudioProcessor& audioProcessor)
+KitCatAudioProcessorEditor::KitCatAudioProcessorEditor(KitCatAudioProcessor& audioProcessor)
     : AudioProcessorEditor(audioProcessor),
       audioUIBridge(audioProcessor.audioUIBridge),
       corpusPublisher(audioProcessor.corpusPublisher),
@@ -89,7 +89,7 @@ CatKitAudioProcessorEditor::CatKitAudioProcessorEditor(CatKitAudioProcessor& aud
     startTimerHz(60);
 }
 
-CatKitAudioProcessorEditor::~CatKitAudioProcessorEditor()
+KitCatAudioProcessorEditor::~KitCatAudioProcessorEditor()
 {
     stopTimer();
 
@@ -98,12 +98,12 @@ CatKitAudioProcessorEditor::~CatKitAudioProcessorEditor()
     setLookAndFeel(nullptr);
 }
 
-void CatKitAudioProcessorEditor::paint(juce::Graphics& g)
+void KitCatAudioProcessorEditor::paint(juce::Graphics& g)
 {
     g.fillAll(lookAndFeel.windowColour);
 }
 
-void CatKitAudioProcessorEditor::resized()
+void KitCatAudioProcessorEditor::resized()
 {
     scaledView->setBounds(getLocalBounds());
 
@@ -119,7 +119,7 @@ void CatKitAudioProcessorEditor::resized()
     corpusMap.setBounds(bounds);
 }
 
-void CatKitAudioProcessorEditor::chooseCorpus()
+void KitCatAudioProcessorEditor::chooseCorpus()
 {
     const int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::canSelectDirectories;
 
@@ -136,7 +136,7 @@ void CatKitAudioProcessorEditor::chooseCorpus()
     });
 }
 
-void CatKitAudioProcessorEditor::chooseAnalysisToSave()
+void KitCatAudioProcessorEditor::chooseAnalysisToSave()
 {
     const int flags = juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting;
 
@@ -151,7 +151,7 @@ void CatKitAudioProcessorEditor::chooseAnalysisToSave()
     });
 }
 
-void CatKitAudioProcessorEditor::chooseAnalysisToLoad()
+void KitCatAudioProcessorEditor::chooseAnalysisToLoad()
 {
     const int flags = juce::FileBrowserComponent::openMode | juce::FileBrowserComponent::canSelectFiles;
 
@@ -166,7 +166,7 @@ void CatKitAudioProcessorEditor::chooseAnalysisToLoad()
     });
 }
 
-void CatKitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
+void KitCatAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster* source)
 {
     corpusBar.statusLabel.setText(corpusLoader.statusText, juce::dontSendNotification);
 
@@ -180,7 +180,7 @@ void CatKitAudioProcessorEditor::changeListenerCallback(juce::ChangeBroadcaster*
     corpusMap.repaint();
 }
 
-void CatKitAudioProcessorEditor::timerCallback()
+void KitCatAudioProcessorEditor::timerCallback()
 {
     audioUIBridge.flashFifo.drain([this](const AudioUIBridge::SliceFlash& flash) {
         corpusMap.flashSlice(flash.sliceIndex);

@@ -15,13 +15,13 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
-class CatKitAudioProcessor;
+class KitCatAudioProcessor;
 
-class CatKitAudioProcessorEditor : public juce::AudioProcessorEditor, private juce::ChangeListener, private juce::Timer
+class KitCatAudioProcessorEditor : public juce::AudioProcessorEditor, private juce::ChangeListener, private juce::Timer
 {
 public:
-    explicit CatKitAudioProcessorEditor(CatKitAudioProcessor& audioProcessor);
-    ~CatKitAudioProcessorEditor() override;
+    explicit KitCatAudioProcessorEditor(KitCatAudioProcessor& audioProcessor);
+    ~KitCatAudioProcessorEditor() override;
 
     void paint   (juce::Graphics& g) override;
     void resized () override;

@@ -7,7 +7,7 @@
 
 struct DrumLoopFolder
 {
-    juce::File folder = juce::File::getSpecialLocation(juce::File::tempDirectory).getNonexistentChildFile("CatKitDrumLoop", "", false);
+    juce::File folder = juce::File::getSpecialLocation(juce::File::tempDirectory).getNonexistentChildFile("KitCatDrumLoop", "", false);
 
     ~DrumLoopFolder()
     {
@@ -64,7 +64,7 @@ TEST_CASE("a drum loop analysed as a corpus answers the same drums with grains",
     const juce::File         audioFile = temporary.folder.getChildFile("drums.wav");
     const std::vector<float> drums     = makeDrumLoop(sampleRate, hitCount, hitSpacing);
     CorpusAnalysis           analysis;
-    CatKitAudioProcessor     processor;
+    KitCatAudioProcessor     processor;
     juce::AudioBuffer<float> buffer(2, blockSize);
     juce::MidiBuffer         midi;
     int                      soundingSamples = 0;
@@ -128,7 +128,7 @@ TEST_CASE("a grain starts no earlier than the input that triggered it and within
     constexpr int    onsetOffset  = 300;
     constexpr int    onset        = silentBlocks * blockSize + onsetOffset;
 
-    CatKitAudioProcessor     processor;
+    KitCatAudioProcessor     processor;
     juce::AudioBuffer<float> buffer(2, blockSize);
     juce::MidiBuffer         midi;
     int                      firstSound = -1;
@@ -164,5 +164,5 @@ TEST_CASE("a grain starts no earlier than the input that triggered it and within
     const int latency = firstSound - onset;
 
     CHECK(latency >= 0);
-    CHECK(latency <= CatKitAudioProcessor::targetHopSize + 1);
+    CHECK(latency <= KitCatAudioProcessor::targetHopSize + 1);
 }
