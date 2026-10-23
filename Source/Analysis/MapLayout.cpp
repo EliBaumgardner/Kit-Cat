@@ -15,27 +15,32 @@ fluid::RealMatrix MapLayout::train(const DataSet& descriptors, const std::functi
     using AbDifference = Eigen::NumericalDiff<AbCurve>;
 
     const fluid::index neighbours = std::min(static_cast<fluid::index>(neighbourCount), descriptors.size() - 1);
+    fluid::index       entry      = 0;
 
     std::random_device device;
-    std::mt19937_64    random(seed.value_or(device()));
 
-    AbCurve                                 abCurve(minimumDistance);
-    AbDifference                            abDifference(abCurve);
+    std::mt19937_64 random(seed.value_or(device()));
+
+    AbCurve abCurve(minimumDistance);
+
+    AbDifference abDifference(abCurve);
 
     Eigen::LevenbergMarquardt<AbDifference> abFit(abDifference);
-    Eigen::VectorXd                         ab = Eigen::VectorXd::Ones(2);
+
+    Eigen::VectorXd ab = Eigen::VectorXd::Ones(2);
 
     fluid::algorithm::SpectralEmbedding spectralEmbedding;
 
-    Eigen::SparseMatrix<double>         graph = buildGraph(descriptors, neighbours, shouldStop);
-    Eigen::ArrayXXd                     embedding;
+    Eigen::SparseMatrix<double> graph = buildGraph(descriptors, neighbours, shouldStop);
+
+    Eigen::ArrayXXd embedding;
 
     Eigen::ArrayXi heads;
     Eigen::ArrayXi tails;
+
     Eigen::ArrayXd epochsPerSample;
 
-    double         maximumWeight = 0.0;
-    fluid::index   entry         = 0;
+    double maximumWeight = 0.0;
 
     if (shouldStop()) {
         return {};
@@ -76,15 +81,19 @@ fluid::RealMatrix MapLayout::train(const DataSet& descriptors, const std::functi
 Eigen::SparseMatrix<double> MapLayout::buildGraph(const DataSet& descriptors, fluid::index neighbours, const std::function<bool()>& shouldStop) const
 {
     const fluid::index pointCount = descriptors.size();
-    const auto         data       = descriptors.getData();
+
+    const auto data = descriptors.getData();
 
     fluid::FluidTensor<std::string, 1> pointIds(pointCount);
-    fluid::algorithm::KDTree           tree;
+
+    fluid::algorithm::KDTree tree;
 
     Eigen::SparseMatrix<double> graph(pointCount, pointCount);
     Eigen::SparseMatrix<double> transposed;
-    Eigen::ArrayXXd             distances = Eigen::ArrayXXd::Zero(pointCount, neighbours);
-    Eigen::ArrayXd              sigma;
+
+    Eigen::ArrayXXd distances = Eigen::ArrayXXd::Zero(pointCount, neighbours);
+
+    Eigen::ArrayXd sigma;
 
     for (fluid::index point = 0; point < pointCount; ++point) {
         pointIds(point) = std::to_string(point);
@@ -98,8 +107,9 @@ Eigen::SparseMatrix<double> MapLayout::buildGraph(const DataSet& descriptors, fl
         auto [nearestDistances, nearestIds] = tree.kNearest(data.row(point), neighbours + 1);
 
         for (fluid::index neighbour = 0; neighbour < neighbours; ++neighbour) {
-            const size_t       position = static_cast<size_t>(neighbour + 1);
-            const fluid::index other    = std::stoi(*nearestIds[position]);
+            const size_t position = static_cast<size_t>(neighbour + 1);
+
+            const fluid::index other = std::stoi(*nearestIds[position]);
 
             distances(point, neighbour) = nearestDistances[position];
             graph.insert(point, other)  = nearestDistances[position];
@@ -126,15 +136,15 @@ Eigen::SparseMatrix<double> MapLayout::buildGraph(const DataSet& descriptors, fl
 
 Eigen::ArrayXd MapLayout::findSigma(const Eigen::ArrayXXd& distances, fluid::index neighbours) const
 {
-    const double   target = std::log2(neighbours);
-    Eigen::ArrayXd sigma  = Eigen::ArrayXd::Zero(distances.rows());
+    const double target = std::log2(neighbours);
+
+    Eigen::ArrayXd sigma = Eigen::ArrayXd::Zero(distances.rows());
 
     for (fluid::index point = 0; point < distances.rows(); ++point) {
         const double nearest = distances(point, 0);
-
-        double low    = 0.0;
-        double high   = fluid::algorithm::infinity;
-        double middle = 1.0;
+        double       low     = 0.0;
+        double       high    = fluid::algorithm::infinity;
+        double       middle  = 1.0;
 
         for (int iteration = 0; iteration < sigmaIterationCount; ++iteration) {
             double probabilitySum = 0.0;
@@ -173,12 +183,14 @@ Eigen::ArrayXd MapLayout::findSigma(const Eigen::ArrayXXd& distances, fluid::ind
 
 Eigen::ArrayXXd MapLayout::normalizeEmbedding(const Eigen::ArrayXXd& embedding, std::mt19937_64& random) const
 {
-    const double             expansion = 10.0 / embedding.abs().maxCoeff();
+    const double expansion = 10.0 / embedding.abs().maxCoeff();
+
     std::normal_distribution noiseDistribution(0.0, 1e-4);
 
     const auto noise = Eigen::ArrayXXd::NullaryExpr(embedding.rows(), embedding.cols(), [&noiseDistribution, &random] { return noiseDistribution(random); });
 
-    Eigen::ArrayXXd      result  = (embedding * expansion) + noise;
+    Eigen::ArrayXXd result = (embedding * expansion) + noise;
+
     const Eigen::ArrayXd minimum = result.colwise().minCoeff();
     const Eigen::ArrayXd maximum = result.colwise().maxCoeff();
     const Eigen::ArrayXd range   = (maximum - minimum).max(fluid::algorithm::epsilon);
@@ -192,16 +204,17 @@ Eigen::ArrayXXd MapLayout::normalizeEmbedding(const Eigen::ArrayXXd& embedding, 
 void MapLayout::optimizeLayout(Eigen::ArrayXXd& embedding, const Eigen::ArrayXi& heads, const Eigen::ArrayXi& tails, const Eigen::ArrayXd& epochsPerSample, const Eigen::VectorXd& ab,
                                std::mt19937_64& random, const std::function<bool()>& shouldStop) const
 {
-    const double a = ab(0);
-    const double b = ab(1);
+    const double a     = ab(0);
+    const double b     = ab(1);
+    double       alpha = learningRate;
 
     const Eigen::ArrayXd epochsPerNegativeSample = epochsPerSample / negativeSampleRate;
     Eigen::ArrayXd       nextEpoch               = epochsPerSample;
     Eigen::ArrayXd       nextNegativeEpoch       = epochsPerNegativeSample;
 
-    const MapPoint                              bound = MapPoint::Constant(gradientBound);
+    const MapPoint bound = MapPoint::Constant(gradientBound);
+
     std::uniform_int_distribution<fluid::index> randomPoint(0, embedding.rows() - 1);
-    double                                      alpha = learningRate;
 
     for (fluid::index epoch = 0; epoch < iterationCount; ++epoch) {
         if (shouldStop()) {
@@ -213,9 +226,10 @@ void MapLayout::optimizeLayout(Eigen::ArrayXXd& embedding, const Eigen::ArrayXi&
             MapPoint other;
             MapPoint gradient;
 
-            double       squaredDistance = 0.0;
-            double       coefficient     = 0.0;
-            fluid::index negativeCount   = 0;
+            double squaredDistance = 0.0;
+            double coefficient     = 0.0;
+
+            fluid::index negativeCount = 0;
 
             if (nextEpoch(edge) > epoch) {
                 continue;
@@ -239,7 +253,8 @@ void MapLayout::optimizeLayout(Eigen::ArrayXXd& embedding, const Eigen::ArrayXi&
 
             for (fluid::index negative = 0; negative < negativeCount; ++negative) {
                 const fluid::index negativeIndex = randomPoint(random);
-                MapPoint           negativePoint;
+
+                MapPoint negativePoint;
 
                 if (negativeIndex == heads(edge)) {
                     continue;

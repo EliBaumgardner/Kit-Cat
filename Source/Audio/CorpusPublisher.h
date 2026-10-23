@@ -17,7 +17,8 @@ public:
 
     struct BlockScope
     {
-        CorpusPublisher&              publisher;
+        CorpusPublisher& publisher;
+
         const CorpusAnalysis::Result* corpus = publisher.beginBlock();
 
         ~BlockScope()
@@ -34,11 +35,14 @@ private:
     struct RetiredCorpus
     {
         std::shared_ptr<const CorpusAnalysis::Result> corpus;
-        std::uint64_t                                 retiredAtEpoch = 0;
+
+        std::uint64_t retiredAtEpoch = 0;
     };
 
-    std::atomic<const CorpusAnalysis::Result*>    currentCorpus { nullptr };
-    std::atomic<std::uint64_t>                    blockEpoch { 0 };
-    std::vector<RetiredCorpus>                    retiredCorpora;
-    std::uint64_t                                 corpusGeneration = 0;
+    std::atomic<const CorpusAnalysis::Result*> currentCorpus { nullptr };
+    std::atomic<std::uint64_t>                 blockEpoch { 0 };
+
+    std::vector<RetiredCorpus> retiredCorpora;
+
+    std::uint64_t corpusGeneration = 0;
 };

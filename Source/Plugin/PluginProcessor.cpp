@@ -49,12 +49,15 @@ void KitCatAudioProcessor::releaseResources()
 
 void KitCatAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) noexcept [[clang::nonblocking]]
 {
-    juce::ScopedNoDenormals     noDenormals;
+    juce::ScopedNoDenormals noDenormals;
+
     CorpusPublisher::BlockScope block { corpusPublisher };
-    const int                   numSamples    = buffer.getNumSamples();
-    const int                   inputChannels = getTotalNumInputChannels();
-    const float                 channelShare  = 1.0f / static_cast<float>(juce::jmax(1, inputChannels));
-    const float                 gateGain      = juce::Decibels::decibelsToGain(inputGateThresholdDb.load());
+
+    const int numSamples    = buffer.getNumSamples();
+    const int inputChannels = getTotalNumInputChannels();
+
+    const float channelShare = 1.0f / static_cast<float>(juce::jmax(1, inputChannels));
+    const float gateGain     = juce::Decibels::decibelsToGain(inputGateThresholdDb.load());
 
     if (liveMatchingEnabled.load() && inputChannels > 0) {
         for (int sample = 0; sample < numSamples; ++sample) {
@@ -122,7 +125,8 @@ void KitCatAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 void KitCatAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 {
     const std::unique_ptr<juce::XmlElement> xml = getXmlFromBinary(data, sizeInBytes);
-    juce::ValueTree                         restored;
+
+    juce::ValueTree restored;
 
     if (xml != nullptr) {
         restored = juce::ValueTree::fromXml(*xml);

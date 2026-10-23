@@ -27,30 +27,36 @@ public:
 
     struct KDTreeNode
     {
-        int    sliceIndex = -1;
-        int    leftChild  = -1;
-        int    rightChild = -1;
-        int    splitDim   = 0;
+        int sliceIndex = -1;
+        int leftChild  = -1;
+        int rightChild = -1;
+        int splitDim   = 0;
+
         double splitValue = 0.0;
     };
 
     struct Slice
     {
-        int                  fileIndex = 0;
+        int fileIndex = 0;
+
         SliceAnalysis::Slice sound;
-        juce::Point<float>   position;
+
+        juce::Point<float> position;
     };
 
     struct Result
     {
-        juce::String                    error;
-        juce::File                      source;
-        double                          sampleRate = 0.0;
-        std::uint64_t                   generation = 0;
+        juce::String error;
 
-        juce::Array<juce::File>         files;
+        juce::File source;
+
+        double sampleRate = 0.0;
+
+        std::uint64_t generation = 0;
+
+        juce::Array<juce::File> files;
+
         std::vector<std::vector<float>> fileSamples;
-
         std::vector<Slice>              slices;
         std::vector<KDTreeNode>         kdTree;
 
@@ -60,12 +66,15 @@ public:
         std::vector<double>             standardizedMfccs;
     };
 
-    SliceAnalysis         slicing;
-    MapLayout             layout;
+    SliceAnalysis slicing;
+
+    MapLayout layout;
+
     std::function<bool()> shouldStop = [] { return false; };
 
-    static constexpr int         minimumSliceCount   = 7;
-    static constexpr int         analysisFileVersion = 1;
+    static constexpr int minimumSliceCount   = 7;
+    static constexpr int analysisFileVersion = 1;
+
     static constexpr const char* audioFilePattern    = "*.wav;*.aif;*.aiff;*.flac;*.mp3";
     static constexpr const char* analysisFilePattern = "*.json";
 

@@ -17,18 +17,19 @@ TargetMatcher::MatchResult TargetMatcher::match(const TargetAnalyser::TargetFeat
         return result;
     }
 
-    const int    coeffCount  = std::min(features.coefficientCount, static_cast<int>(corpus.mfccMean.size()));
+    const int coeffCount = std::min(features.coefficientCount, static_cast<int>(corpus.mfccMean.size()));
+
     const double pitchShare  = std::clamp(pitchWeight, 0.0, 1.0);
-    const size_t wanted      = static_cast<size_t>(std::clamp(candidateCount, 1, maximumCandidates));
     double       timbreShare = 1.0;
+
+    const size_t wanted    = static_cast<size_t>(std::clamp(candidateCount, 1, maximumCandidates));
+    size_t       found     = 0;
+    size_t       worst     = 0;
+    size_t       stackSize = 0;
 
     std::array<double, TargetAnalyser::maximumCoefficients> targetStd {};
     std::array<Candidate, maximumCandidates>                candidates {};
-    size_t                                                  found = 0;
-    size_t                                                  worst = 0;
-
-    std::array<int, stackCapacity> stack {};
-    size_t                         stackSize = 0;
+    std::array<int, stackCapacity>                          stack {};
 
     if (features.pitchConfidence > SliceAnalysis::voicedConfidence && features.pitchNote > 0.0) {
         timbreShare = 1.0 - pitchShare;
@@ -41,11 +42,13 @@ TargetMatcher::MatchResult TargetMatcher::match(const TargetAnalyser::TargetFeat
     stack[stackSize++] = 0;
 
     while (stackSize > 0) {
-        const CorpusAnalysis::KDTreeNode& node        = corpus.kdTree[static_cast<size_t>(stack[--stackSize])];
-        const double                      distance    = calculateDistance(node.sliceIndex, corpus, targetStd, features.pitchNote, features.pitchConfidence, coeffCount, pitchShare, repetitionPenalty);
-        const double                      splitOffset = targetStd[static_cast<size_t>(node.splitDim)] - node.splitValue;
-        int                               nearChild   = node.leftChild;
-        int                               farChild    = node.rightChild;
+        const CorpusAnalysis::KDTreeNode& node = corpus.kdTree[static_cast<size_t>(stack[--stackSize])];
+
+        const double distance    = calculateDistance(node.sliceIndex, corpus, targetStd, features.pitchNote, features.pitchConfidence, coeffCount, pitchShare, repetitionPenalty);
+        const double splitOffset = targetStd[static_cast<size_t>(node.splitDim)] - node.splitValue;
+
+        int nearChild = node.leftChild;
+        int farChild  = node.rightChild;
 
         if (found < wanted || distance < candidates[worst].distance) {
             if (found < wanted) {
@@ -98,8 +101,9 @@ void TargetMatcher::reset()
 double TargetMatcher::calculateDistance(int sliceIndex, const CorpusAnalysis::Result& corpus, const std::array<double, TargetAnalyser::maximumCoefficients>& targetMfccs,
                                         double targetNote, double targetConfidence, int coefficientCount, double pitchWeight, double repetitionPenalty) const
 {
-    const size_t slice          = static_cast<size_t>(sliceIndex);
-    const size_t row            = slice * corpus.mfccMean.size();
+    const size_t slice = static_cast<size_t>(sliceIndex);
+    const size_t row   = slice * corpus.mfccMean.size();
+
     const double sliceNote      = corpus.pitchNotes[slice];
     const double sliceConfident = corpus.slices[slice].sound.pitchConfidence;
     double       timbreDistSq   = 0.0;
@@ -130,9 +134,10 @@ double TargetMatcher::calculateDistance(int sliceIndex, const CorpusAnalysis::Re
 int TargetMatcher::selectCandidate(const std::array<Candidate, maximumCandidates>& candidates, size_t count)
 {
     std::array<double, maximumCandidates> weights {};
-    double                                totalWeight = 0.0;
-    double                                accumulated = 0.0;
-    double                                target      = 0.0;
+
+    double totalWeight = 0.0;
+    double accumulated = 0.0;
+    double target      = 0.0;
 
     if (count <= 1) {
         return candidates[0].sliceIndex;

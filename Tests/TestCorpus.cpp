@@ -4,13 +4,17 @@
 
 CorpusAnalysis::Result makeTestCorpus(int sliceCount, juce::int64 seed)
 {
-    constexpr int    sliceLength = 4096;
-    constexpr double sampleRate  = 44100.0;
+    constexpr int sliceLength = 4096;
 
-    const CorpusAnalysis   analysis;
-    juce::Random           random(seed);
+    constexpr double sampleRate = 44100.0;
+
+    const CorpusAnalysis analysis;
+
+    juce::Random random(seed);
+
     CorpusAnalysis::Result corpus;
-    std::vector<float>     samples(static_cast<size_t>(sliceCount * sliceLength));
+
+    std::vector<float> samples(static_cast<size_t>(sliceCount * sliceLength));
 
     corpus.sampleRate = sampleRate;
     corpus.files.add(juce::File::getSpecialLocation(juce::File::tempDirectory).getChildFile("KitCatTestCorpus.wav"));

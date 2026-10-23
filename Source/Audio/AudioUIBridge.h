@@ -44,7 +44,8 @@ public:
     std::atomic<bool> overflowed { false };
 
 private:
-    juce::AbstractFifo            fifo { Capacity };
+    juce::AbstractFifo fifo { Capacity };
+
     std::array<Command, Capacity> buffer {};
 };
 
@@ -54,8 +55,10 @@ public:
     struct LivePuck
     {
         juce::Point<float> position;
-        float              rms    = 0.0f;
-        bool               active = false;
+
+        float rms = 0.0f;
+
+        bool active = false;
     };
 
     struct SliceFlash

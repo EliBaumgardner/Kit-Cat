@@ -62,12 +62,16 @@ CorpusAnalysis::Result CorpusAnalysis::analyse(const juce::File& fileOrFolder) c
 
 CorpusAnalysis::Result CorpusAnalysis::load(const juce::File& analysisFile) const
 {
-    const juce::var               json    = juce::JSON::parse(analysisFile);
-    const juce::Array<juce::var>* files   = json["files"].getArray();
-    const juce::Array<juce::var>* slices  = json["slices"].getArray();
-    const juce::String            damaged = analysisFile.getFileName() + " is damaged";
-    SliceAnalysis                 reading = slicing;
-    Result                        result;
+    const juce::var json = juce::JSON::parse(analysisFile);
+
+    const juce::Array<juce::var>* files  = json["files"].getArray();
+    const juce::Array<juce::var>* slices = json["slices"].getArray();
+
+    const juce::String damaged = analysisFile.getFileName() + " is damaged";
+
+    SliceAnalysis reading = slicing;
+
+    Result result;
 
     if (files == nullptr || slices == nullptr || static_cast<int>(json["version"]) != analysisFileVersion) {
         result.error = analysisFile.getFileName() + " is not a Kit-Cat analysis";
@@ -83,7 +87,8 @@ CorpusAnalysis::Result CorpusAnalysis::load(const juce::File& analysisFile) cons
     }
 
     for (const juce::var& file : *files) {
-        juce::File            audioFile = juce::File::createFileWithoutCheckingPath(file["path"].toString());
+        juce::File audioFile = juce::File::createFileWithoutCheckingPath(file["path"].toString());
+
         SliceAnalysis::Result fileResult;
 
         if (shouldStop()) {
@@ -113,7 +118,8 @@ CorpusAnalysis::Result CorpusAnalysis::load(const juce::File& analysisFile) cons
 
     for (const juce::var& slice : *slices) {
         const juce::Array<juce::var>* mfcc = slice["mfcc"].getArray();
-        Slice                         entry;
+
+        Slice entry;
 
         entry.fileIndex         = slice["file"];
         entry.sound.startSample = slice["start"];
@@ -153,8 +159,9 @@ CorpusAnalysis::Result CorpusAnalysis::load(const juce::File& analysisFile) cons
 
 void CorpusAnalysis::buildIndex(Result& result) const
 {
-    const size_t        sliceCount       = result.slices.size();
-    size_t              coefficientCount = 0;
+    const size_t sliceCount       = result.slices.size();
+    size_t       coefficientCount = 0;
+
     std::vector<size_t> order(sliceCount);
 
     if (sliceCount > 0) {
@@ -227,6 +234,7 @@ void CorpusAnalysis::buildIndex(Result& result) const
         });
 
         const size_t sliceIndex = order[middle];
+
         const double splitValue = result.standardizedMfccs[sliceIndex * coefficientCount + splitDim];
 
         result.kdTree.push_back({ static_cast<int>(sliceIndex), -1, -1, static_cast<int>(splitDim), splitValue });
@@ -289,8 +297,9 @@ juce::String CorpusAnalysis::summarise(const Result& result)
 juce::String CorpusAnalysis::save(const Result& result, const juce::File& analysisFile)
 {
     juce::DynamicObject::Ptr json = new juce::DynamicObject();
-    juce::Array<juce::var>   files;
-    juce::Array<juce::var>   slices;
+
+    juce::Array<juce::var> files;
+    juce::Array<juce::var> slices;
 
     for (int fileIndex = 0; fileIndex < result.files.size(); ++fileIndex) {
         juce::DynamicObject::Ptr file = new juce::DynamicObject();
@@ -304,7 +313,8 @@ juce::String CorpusAnalysis::save(const Result& result, const juce::File& analys
 
     for (const Slice& slice : result.slices) {
         juce::DynamicObject::Ptr entry = new juce::DynamicObject();
-        juce::Array<juce::var>   mfcc;
+
+        juce::Array<juce::var> mfcc;
 
         for (const double coefficient : slice.sound.meanMfcc) {
             mfcc.add(coefficient);
@@ -342,13 +352,16 @@ void CorpusAnalysis::layOutMap(Result& result) const
     const fluid::index coefficientCount = slicing.coefficientCount;
 
     fluid::FluidTensor<std::string, 1> ids(sliceCount);
-    fluid::RealMatrix                  descriptors(sliceCount, coefficientCount);
-    fluid::RealMatrix                  scaled(sliceCount, coefficientCount);
-    fluid::algorithm::Standardization  standardization;
-    MapLayout::DataSet                 scaledSet;
 
-    fluid::RealMatrix               embedding;
-    fluid::RealMatrix               positions(sliceCount, 2);
+    fluid::RealMatrix descriptors(sliceCount, coefficientCount);
+    fluid::RealMatrix scaled(sliceCount, coefficientCount);
+    fluid::RealMatrix embedding;
+    fluid::RealMatrix positions(sliceCount, 2);
+
+    fluid::algorithm::Standardization standardization;
+
+    MapLayout::DataSet scaledSet;
+
     fluid::algorithm::Normalization normalization;
 
     for (fluid::index slice = 0; slice < sliceCount; ++slice) {

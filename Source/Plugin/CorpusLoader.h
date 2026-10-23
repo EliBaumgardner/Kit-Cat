@@ -27,16 +27,20 @@ public:
         Analysing
     };
 
-    juce::String  statusText = "Load a sample or a folder of samples to map its slices.";
-    AnalysisState state      = AnalysisState::Idle;
+    juce::String statusText = "Load a sample or a folder of samples to map its slices.";
+
+    AnalysisState state = AnalysisState::Idle;
 
 private:
     void startJob (const juce::String& status, std::function<CorpusAnalysis::Result(const CorpusAnalysis&)> job);
 
-    juce::ValueTree  settings;
+    juce::ValueTree settings;
+
     CorpusPublisher& corpusPublisher;
     SlicePlayer&     slicePlayer;
-    std::uint64_t    latestRequest = 0;
+
+    std::uint64_t latestRequest = 0;
+
     juce::ThreadPool analysisPool { 1 };
 
     JUCE_DECLARE_WEAK_REFERENCEABLE(CorpusLoader)

@@ -12,13 +12,13 @@ ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undo
       settings(settings),
       undoManager(undoManager),
       slicingModeSelector(undoManager),
-      thresholdEditor(undoManager),
       metricSelector(undoManager),
+      liveMatchingSelector(undoManager),
+      thresholdEditor(undoManager),
       minimumSliceEditor(undoManager),
       coefficientEditor(undoManager),
       neighbourEditor(undoManager),
       minimumDistanceEditor(undoManager),
-      liveMatchingSelector(undoManager),
       gateThresholdEditor(undoManager),
       pitchWeightEditor(undoManager),
       candidateCountEditor(undoManager),
@@ -26,11 +26,12 @@ ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undo
       fadeEditor(undoManager),
       lengthEditor(undoManager)
 {
-    const juce::StringArray       metricNames { "Energy", "High frequency content", "Spectral flux", "Modified Kullback-Leibler", "Itakura-Saito", "Cosine",
-                                                "Phase deviation", "Weighted phase deviation", "Complex deviation", "Rectified complex deviation" };
-    std::unique_ptr<ArsNovaUI::NumberFormat> fadeFormat = std::make_unique<ArsNovaUI::NumberFormat>(1.0, 100.0);
+    const juce::StringArray metricNames { "Energy", "High frequency content", "Spectral flux", "Modified Kullback-Leibler", "Itakura-Saito", "Cosine",
+                                          "Phase deviation", "Weighted phase deviation", "Complex deviation", "Rectified complex deviation" };
+
+    std::unique_ptr<ArsNovaUI::NumberFormat> fadeFormat   = std::make_unique<ArsNovaUI::NumberFormat>(1.0, 100.0);
     std::unique_ptr<ArsNovaUI::NumberFormat> lengthFormat = std::make_unique<ArsNovaUI::NumberFormat>(0.0, 10000.0);
-    std::unique_ptr<ArsNovaUI::NumberFormat> gateFormat = std::make_unique<ArsNovaUI::NumberFormat>(-80.0, 0.0, 1);
+    std::unique_ptr<ArsNovaUI::NumberFormat> gateFormat   = std::make_unique<ArsNovaUI::NumberFormat>(-80.0, 0.0, 1);
 
     fadeFormat->suffix   = " ms";
     lengthFormat->suffix = " ms";
@@ -132,22 +133,28 @@ ParameterPanel::ParameterPanel(juce::ValueTree settings, juce::UndoManager& undo
 
 void ParameterPanel::resized()
 {
-    const ArsNovaUI::CustomLookAndFeel&                lookAndFeel  = ArsNovaUI::CustomLookAndFeel::get(*this);
-    const juce::Font                                   font         = lookAndFeel.font(ArsNovaUI::Theme::FontStyle::Regular, ArsNovaUI::Theme::textHeight);
-    const juce::Font                                   headingFont  = lookAndFeel.font(ArsNovaUI::Theme::FontStyle::SemiBold, ArsNovaUI::Theme::textHeight);
-    const int                                          rowHeight    = juce::roundToInt(ArsNovaUI::Theme::barHeight * ArsNovaUI::Theme::menuRowHeightRatio);
-    const int                                          spacing      = juce::roundToInt(ArsNovaUI::Theme::barHeight * ArsNovaUI::Theme::menuSpacingRatio);
-    const std::array<ArsNovaUI::CaptionLabel*, 3>      headings     { &analysisHeading, &liveMatchingHeading, &playbackHeading };
-    const std::array<ArsNovaUI::CaptionLabel*, 3>      captions     { &slicingModeLabel, &metricLabel, &liveMatchingLabel };
-    const std::array<ArsNovaUI::LabeledEditor*, 11>    editors      { &thresholdEditor, &minimumSliceEditor, &coefficientEditor, &neighbourEditor, &minimumDistanceEditor,
-                                                                      &gateThresholdEditor, &pitchWeightEditor, &candidateCountEditor, &repetitionPenaltyEditor,
-                                                                      &fadeEditor, &lengthEditor };
-    const std::array<std::vector<juce::Component*>, 3> sectionRows  { std::vector<juce::Component*> { &slicingModeSelector, &thresholdEditor, &metricSelector, &minimumSliceEditor,
-                                                                                                        &coefficientEditor, &neighbourEditor, &minimumDistanceEditor },
-                                                                      std::vector<juce::Component*> { &liveMatchingSelector, &gateThresholdEditor, &pitchWeightEditor,
-                                                                                                        &candidateCountEditor, &repetitionPenaltyEditor },
-                                                                      std::vector<juce::Component*> { &fadeEditor, &lengthEditor } };
-    juce::Rectangle<int>                               bounds       = getLocalBounds().reduced(ArsNovaUI::Theme::windowGutter);
+    const ArsNovaUI::CustomLookAndFeel& lookAndFeel = ArsNovaUI::CustomLookAndFeel::get(*this);
+
+    const juce::Font font        = lookAndFeel.font(ArsNovaUI::Theme::FontStyle::Regular, ArsNovaUI::Theme::textHeight);
+    const juce::Font headingFont = lookAndFeel.font(ArsNovaUI::Theme::FontStyle::SemiBold, ArsNovaUI::Theme::textHeight);
+
+    const int rowHeight = juce::roundToInt(ArsNovaUI::Theme::barHeight * ArsNovaUI::Theme::menuRowHeightRatio);
+    const int spacing   = juce::roundToInt(ArsNovaUI::Theme::barHeight * ArsNovaUI::Theme::menuSpacingRatio);
+
+    const std::array<ArsNovaUI::CaptionLabel*, 3> headings { &analysisHeading, &liveMatchingHeading, &playbackHeading };
+    const std::array<ArsNovaUI::CaptionLabel*, 3> captions { &slicingModeLabel, &metricLabel, &liveMatchingLabel };
+
+    const std::array<ArsNovaUI::LabeledEditor*, 11> editors { &thresholdEditor, &minimumSliceEditor, &coefficientEditor, &neighbourEditor, &minimumDistanceEditor,
+                                                              &gateThresholdEditor, &pitchWeightEditor, &candidateCountEditor, &repetitionPenaltyEditor,
+                                                              &fadeEditor, &lengthEditor };
+
+    const std::array<std::vector<juce::Component*>, 3> sectionRows { std::vector<juce::Component*> { &slicingModeSelector, &thresholdEditor, &metricSelector, &minimumSliceEditor,
+                                                                                                       &coefficientEditor, &neighbourEditor, &minimumDistanceEditor },
+                                                                     std::vector<juce::Component*> { &liveMatchingSelector, &gateThresholdEditor, &pitchWeightEditor,
+                                                                                                       &candidateCountEditor, &repetitionPenaltyEditor },
+                                                                     std::vector<juce::Component*> { &fadeEditor, &lengthEditor } };
+
+    juce::Rectangle<int> bounds = getLocalBounds().reduced(ArsNovaUI::Theme::windowGutter);
 
     resizer.setBounds(getLocalBounds().removeFromLeft(ArsNovaUI::Theme::windowGutter));
 
@@ -170,9 +177,10 @@ void ParameterPanel::resized()
     }
 
     for (size_t section = 0; section < sectionRows.size(); ++section) {
-        const int            rowCount = static_cast<int>(sectionRows[section].size()) + 1;
-        const int            height   = rowCount * rowHeight + (rowCount - 1) * spacing + sectionInset * 2;
-        juce::Rectangle<int> rowArea  = bounds.removeFromTop(height).reduced(sectionInset);
+        const int rowCount = static_cast<int>(sectionRows[section].size()) + 1;
+        const int height   = rowCount * rowHeight + (rowCount - 1) * spacing + sectionInset * 2;
+
+        juce::Rectangle<int> rowArea = bounds.removeFromTop(height).reduced(sectionInset);
 
         sectionBounds[section] = rowArea.expanded(sectionInset);
 

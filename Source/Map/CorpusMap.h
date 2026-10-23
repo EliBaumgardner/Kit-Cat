@@ -35,8 +35,10 @@ public:
     };
 
     std::shared_ptr<const CorpusAnalysis::Result> corpus;
-    std::function<void(int sliceIndex)>           onSlicePicked;
-    MapState                                      state = MapState::Playable;
+
+    std::function<void(int sliceIndex)> onSlicePicked;
+
+    MapState state = MapState::Playable;
 
     static constexpr float dotDiameter         = 6.0f;
     static constexpr float hoveredDotDiameter  = 11.0f;
@@ -45,22 +47,28 @@ public:
     static constexpr float gridSpacing         = 24.0f;
     static constexpr float margin              = 12.0f;
     static constexpr float pickRadius          = 20.0f;
-    static constexpr int   loadingSpinnerSize  = 40;
     static constexpr float minimumZoom         = 0.5f;
     static constexpr float maximumZoom         = 40.0f;
     static constexpr float wheelZoomStep       = 0.15f;
     static constexpr float wheelScrollDistance = 100.0f;
+
+    static constexpr int loadingSpinnerSize = 40;
 
 private:
     int nearestSlice (juce::Point<float> position) const;
 
     std::optional<juce::Point<float>> cursorPosition;
     std::optional<juce::Point<float>> livePuckPosition;
-    float                             livePuckRms    = 0.0f;
-    bool                              livePuckActive = false;
-    std::vector<float>                sliceFlashes;
-    juce::AffineTransform             viewTransform;
-    float                             zoom           = 1.0f;
-    int                               hoveredSlice   = -1;
-    int                               playedSlice    = -1;
+
+    float livePuckRms = 0.0f;
+    float zoom        = 1.0f;
+
+    bool livePuckActive = false;
+
+    std::vector<float> sliceFlashes;
+
+    juce::AffineTransform viewTransform;
+
+    int hoveredSlice = -1;
+    int playedSlice  = -1;
 };

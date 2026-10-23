@@ -14,6 +14,7 @@
 SliceAnalysis::Result SliceAnalysis::analyse(const juce::File& file, const std::function<bool()>& shouldStop) const
 {
     Result result;
+
     Frames frames;
 
     readMonoSamples(file, result);
@@ -36,10 +37,13 @@ SliceAnalysis::Result SliceAnalysis::analyse(const juce::File& file, const std::
 
 void SliceAnalysis::readMonoSamples(const juce::File& file, Result& result) const
 {
-    juce::AudioFormatManager                 formats;
+    juce::AudioFormatManager formats;
+
     std::unique_ptr<juce::AudioFormatReader> reader;
-    juce::AudioBuffer<float>                 buffer;
-    juce::LagrangeInterpolator               interpolator;
+
+    juce::AudioBuffer<float> buffer;
+
+    juce::LagrangeInterpolator interpolator;
 
     formats.registerBasicFormats();
 
@@ -50,10 +54,11 @@ void SliceAnalysis::readMonoSamples(const juce::File& file, Result& result) cons
         return;
     }
 
-    const double speedRatio      = reader->sampleRate / sampleRate;
-    const int    channelCount    = static_cast<int>(reader->numChannels);
-    const int    sourceLength    = static_cast<int>(reader->lengthInSamples);
-    const int    resampledLength = static_cast<int>(std::ceil(sourceLength / speedRatio));
+    const double speedRatio = reader->sampleRate / sampleRate;
+
+    const int channelCount    = static_cast<int>(reader->numChannels);
+    const int sourceLength    = static_cast<int>(reader->lengthInSamples);
+    const int resampledLength = static_cast<int>(std::ceil(sourceLength / speedRatio));
 
     buffer.setSize(channelCount, sourceLength);
     reader->read(&buffer, 0, sourceLength, 0, true, true);
@@ -77,18 +82,25 @@ SliceAnalysis::Frames SliceAnalysis::analyseFrames(const std::vector<float>& sam
     const fluid::index frameCount  = (sampleCount + hopSize) / hopSize;
     const fluid::index metric      = static_cast<fluid::index>(onsetMetric);
 
-    fluid::RealVector                   padded(sampleCount + windowSize + hopSize);
-    fluid::ComplexVector                spectrum(binCount);
-    fluid::RealVector                   magnitude(binCount);
-    fluid::RealVector                   mels(bandCount);
-    fluid::RealVector                   coefficients(coefficientCount);
-    fluid::RealVector                   yinOutput(2);
-    fluid::algorithm::STFT              stft(windowSize, fftSize, hopSize);
-    fluid::algorithm::MelBands          bands(bandCount, fftSize);
-    fluid::algorithm::DCT               dct(bandCount, coefficientCount);
+    fluid::RealVector padded(sampleCount + windowSize + hopSize);
+    fluid::RealVector magnitude(binCount);
+    fluid::RealVector mels(bandCount);
+    fluid::RealVector coefficients(coefficientCount);
+    fluid::RealVector yinOutput(2);
+
+    fluid::ComplexVector spectrum(binCount);
+
+    fluid::algorithm::STFT stft(windowSize, fftSize, hopSize);
+
+    fluid::algorithm::MelBands bands(bandCount, fftSize);
+
+    fluid::algorithm::DCT dct(bandCount, coefficientCount);
+
     fluid::algorithm::OnsetSegmentation onsets(fftSize, maximumFilterSize);
-    fluid::algorithm::YINFFT            yin(binCount);
-    Frames                              frames;
+
+    fluid::algorithm::YINFFT yin(binCount);
+
+    Frames frames;
 
     std::fill(padded.begin(), padded.end(), 0.0);
     std::copy(samples.begin(), samples.end(), padded.begin() + windowSize / 2);
@@ -128,8 +140,10 @@ SliceAnalysis::Frames SliceAnalysis::analyseFrames(const std::vector<float>& sam
 
 void SliceAnalysis::collectSlices(const Frames& frames, Result& result) const
 {
-    const juce::int64                     frameTotal = static_cast<juce::int64>(frames.pitches.size());
-    const size_t                          mfccWidth  = static_cast<size_t>(coefficientCount);
+    const juce::int64 frameTotal = static_cast<juce::int64>(frames.pitches.size());
+
+    const size_t mfccWidth = static_cast<size_t>(coefficientCount);
+
     std::vector<juce::Range<juce::int64>> spans;
 
     if (slicingMode == SlicingMode::Granular) {
@@ -155,13 +169,15 @@ void SliceAnalysis::collectSlices(const Frames& frames, Result& result) const
     result.slices.reserve(spans.size());
 
     for (const juce::Range<juce::int64>& span : spans) {
-        const juce::int64 firstFrame    = std::min(span.getStart() / hopSize, frameTotal - 1);
-        const juce::int64 endFrame      = std::clamp(span.getEnd() / hopSize, firstFrame + 1, frameTotal);
-        const double      frameCount    = static_cast<double>(endFrame - firstFrame);
-        double            pitchSum      = 0.0;
-        double            confidenceSum = 0.0;
-        double            voicedWeight  = 0.0;
-        Slice             slice;
+        const juce::int64 firstFrame = std::min(span.getStart() / hopSize, frameTotal - 1);
+        const juce::int64 endFrame   = std::clamp(span.getEnd() / hopSize, firstFrame + 1, frameTotal);
+
+        const double frameCount    = static_cast<double>(endFrame - firstFrame);
+        double       pitchSum      = 0.0;
+        double       confidenceSum = 0.0;
+        double       voicedWeight  = 0.0;
+
+        Slice slice;
 
         slice.startSample = span.getStart();
         slice.endSample   = span.getEnd();
@@ -169,6 +185,7 @@ void SliceAnalysis::collectSlices(const Frames& frames, Result& result) const
 
         for (juce::int64 frame = firstFrame; frame < endFrame; ++frame) {
             const size_t frameIndex = static_cast<size_t>(frame);
+
             const double pitch      = frames.pitches[frameIndex];
             const double confidence = frames.confidences[frameIndex];
 

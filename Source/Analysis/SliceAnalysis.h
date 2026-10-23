@@ -36,44 +36,51 @@ public:
 
     struct Slice
     {
-        juce::int64         startSample     = 0;
-        juce::int64         endSample       = 0;
-        double              pitch           = 0.0;
-        double              pitchConfidence = 0.0;
+        juce::int64 startSample = 0;
+        juce::int64 endSample   = 0;
+
+        double pitch           = 0.0;
+        double pitchConfidence = 0.0;
+
         std::vector<double> meanMfcc;
     };
 
     struct Result
     {
-        juce::String       error;
-        juce::int64        lengthInSamples = 0;
+        juce::String error;
+
+        juce::int64 lengthInSamples = 0;
+
         std::vector<float> samples;
         std::vector<Slice> slices;
     };
 
-    double      sampleRate            = 44100.0;
+    double sampleRate            = 44100.0;
+    double threshold             = 0.5;
 
-    SlicingMode slicingMode           = SlicingMode::Onset;
-    OnsetMetric onsetMetric           = OnsetMetric::Energy;
+    double grainSizeMilliseconds = 60.0;
+    double grainHopMilliseconds  = 30.0;
 
-    double      threshold             = 0.5;
-    double      grainSizeMilliseconds = 60.0;
-    double      grainHopMilliseconds  = 30.0;
+    double minimumFrequency      = 20.0;
+    double maximumFrequency      = 20000.0;
 
-    int         minimumSliceFrames    = 2;
-    int         filterSize            = 5;
-    int         windowSize            = 1024;
-    int         fftSize               = 1024;
-    int         hopSize               = 512;
-    int         bandCount             = 40;
-    int         coefficientCount      = 13;
+    SlicingMode slicingMode = SlicingMode::Onset;
 
-    double      minimumFrequency      = 20.0;
-    double      maximumFrequency      = 20000.0;
+    OnsetMetric onsetMetric = OnsetMetric::Energy;
 
-    static constexpr int         maximumFilterSize = 101;
-    static constexpr double      voicedConfidence  = 0.3;
-    static constexpr const char* stoppedError      = "The analysis was stopped";
+    int minimumSliceFrames = 2;
+    int filterSize         = 5;
+    int windowSize         = 1024;
+    int fftSize            = 1024;
+    int hopSize            = 512;
+    int bandCount          = 40;
+    int coefficientCount   = 13;
+
+    static constexpr int maximumFilterSize = 101;
+
+    static constexpr double voicedConfidence = 0.3;
+
+    static constexpr const char* stoppedError = "The analysis was stopped";
 
 private:
     struct Frames;

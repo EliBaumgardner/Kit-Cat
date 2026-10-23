@@ -27,7 +27,8 @@ void CorpusLoader::loadAnalysis(const juce::File& analysisFile)
 void CorpusLoader::saveAnalysis(const juce::File& analysisFile)
 {
     const std::shared_ptr<const CorpusAnalysis::Result> corpus = corpusPublisher.publishedCorpus;
-    juce::String                                        error  = "There is no analysis to save yet.";
+
+    juce::String error = "There is no analysis to save yet.";
 
     if (corpus != nullptr) {
         error = CorpusAnalysis::save(*corpus, analysisFile);
@@ -62,7 +63,8 @@ CorpusAnalysis CorpusLoader::readSettings() const
 void CorpusLoader::startJob(const juce::String& status, std::function<CorpusAnalysis::Result(const CorpusAnalysis&)> job)
 {
     juce::WeakReference<CorpusLoader> loader(this);
-    CorpusAnalysis                    analysis = readSettings();
+
+    CorpusAnalysis analysis = readSettings();
 
     latestRequest += 1;
     statusText = status;

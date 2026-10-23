@@ -10,9 +10,9 @@ KitCatAudioProcessorEditor::KitCatAudioProcessorEditor(KitCatAudioProcessor& aud
       corpusPublisher(audioProcessor.corpusPublisher),
       slicePlayer(audioProcessor.slicePlayer),
       corpusLoader(audioProcessor.corpusLoader),
+      undoManager(audioProcessor.undoManager),
       settings(audioProcessor.settings),
       colourPresets(audioProcessor.colourPresets),
-      undoManager(audioProcessor.undoManager),
       parameterPanel(audioProcessor.settings, audioProcessor.undoManager)
 {
     juce::PropertiesFile::Options interfaceSettingsOptions;
@@ -43,7 +43,8 @@ KitCatAudioProcessorEditor::KitCatAudioProcessorEditor(KitCatAudioProcessor& aud
     corpusBar.onSettings = [this] {
         settingsLauncher.show(corpusBar, [this] {
             std::unique_ptr<ArsNovaUI::SettingsMenu> content = std::make_unique<ArsNovaUI::SettingsMenu>(lookAndFeel, *interfaceSettings, *scaledView, colourPresets, undoManager);
-            const juce::Point<int>                   size    = content->narrowestSize();
+
+            const juce::Point<int> size = content->narrowestSize();
 
             content->setSize(size.x, size.y);
 
@@ -52,9 +53,10 @@ KitCatAudioProcessorEditor::KitCatAudioProcessorEditor(KitCatAudioProcessor& aud
     };
 
     scaledView->onZoomChanged = [this] {
-        const juce::Point<int>               minimumSize = scaledView->minimumContentSize;
-        juce::Component* const               window      = getTopLevelComponent();
-        const juce::Displays::Display* const display     = juce::Desktop::getInstance().getDisplays().getDisplayForRect(window->getScreenBounds());
+        const juce::Point<int> minimumSize = scaledView->minimumContentSize;
+
+        juce::Component* const               window  = getTopLevelComponent();
+        const juce::Displays::Display* const display = juce::Desktop::getInstance().getDisplays().getDisplayForRect(window->getScreenBounds());
 
         setResizeLimits(juce::roundToInt(minimumSize.x * scaledView->zoom), juce::roundToInt(minimumSize.y * scaledView->zoom), maximumWindowSide, maximumWindowSide);
 
@@ -107,8 +109,9 @@ void KitCatAudioProcessorEditor::resized()
 {
     scaledView->setBounds(getLocalBounds());
 
-    juce::Rectangle<int> bounds      = workspace.getLocalBounds().reduced(ArsNovaUI::Theme::windowGutter);
-    const int            widestPanel = juce::jmax(ParameterPanel::minimumWidth, juce::jmin(ParameterPanel::maximumWidth, bounds.getWidth() - ArsNovaUI::Theme::windowGutter - minimumMapWidth));
+    juce::Rectangle<int> bounds = workspace.getLocalBounds().reduced(ArsNovaUI::Theme::windowGutter);
+
+    const int widestPanel = juce::jmax(ParameterPanel::minimumWidth, juce::jmin(ParameterPanel::maximumWidth, bounds.getWidth() - ArsNovaUI::Theme::windowGutter - minimumMapWidth));
 
     panelWidth = juce::jlimit(ParameterPanel::minimumWidth, widestPanel, panelWidth);
 

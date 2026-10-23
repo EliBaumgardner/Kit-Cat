@@ -19,7 +19,8 @@ public:
     std::function<void()> onSaveAnalysis;
     std::function<void()> onLoadAnalysis;
     std::function<void()> onSettings;
-    juce::Label           statusLabel;
+
+    juce::Label statusLabel;
 
     static constexpr int analysisPaneWidth = 240;
 

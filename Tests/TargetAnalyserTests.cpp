@@ -14,13 +14,17 @@
 TEST_CASE("the live analyser reads a sine's level and its equal-tempered note", "[analyser]")
 {
     constexpr double sampleRate = 44100.0;
-    constexpr int    windowSize = 1024;
     constexpr double amplitude  = 0.5;
 
-    const double                   expectedNote = GENERATE(57.0, 69.0, 81.0);
-    const double                   frequency    = 440.0 * std::pow(2.0, (expectedNote - 69.0) / 12.0);
-    TargetAnalyser                 analyser;
-    std::vector<float>             window(windowSize);
+    constexpr int windowSize = 1024;
+
+    const double expectedNote = GENERATE(57.0, 69.0, 81.0);
+    const double frequency    = 440.0 * std::pow(2.0, (expectedNote - 69.0) / 12.0);
+
+    TargetAnalyser analyser;
+
+    std::vector<float> window(windowSize);
+
     TargetAnalyser::TargetFeatures features;
 
     analyser.prepare(sampleRate, windowSize, 256, 40, 13);
@@ -39,8 +43,10 @@ TEST_CASE("the live analyser reads a sine's level and its equal-tempered note", 
 
 TEST_CASE("the live analyser reports silence as no level and no note", "[analyser]")
 {
-    TargetAnalyser                 analyser;
-    std::vector<float>             window(1024, 0.0f);
+    TargetAnalyser analyser;
+
+    std::vector<float> window(1024, 0.0f);
+
     TargetAnalyser::TargetFeatures features;
 
     analyser.prepare(44100.0, 1024, 256, 40, 13);
@@ -54,27 +60,36 @@ TEST_CASE("the live analyser reports silence as no level and no note", "[analyse
 TEST_CASE("the live analyser's pitch step agrees with FluCoMa's YINFFT on the same frames", "[analyser]")
 {
     constexpr double sampleRate = 44100.0;
-    constexpr int    windowSize = 1024;
-    constexpr int    binCount   = windowSize / 2 + 1;
 
-    juce::Random             random(21);
-    TargetAnalyser           analyser;
-    fluid::algorithm::STFT   stft(windowSize, windowSize, 256);
+    constexpr int windowSize = 1024;
+    constexpr int binCount   = windowSize / 2 + 1;
+
+    juce::Random random(21);
+
+    TargetAnalyser analyser;
+
+    fluid::algorithm::STFT stft(windowSize, windowSize, 256);
+
     fluid::algorithm::YINFFT yin(binCount);
-    fluid::RealVector        frame(windowSize);
-    fluid::ComplexVector     spectrum(binCount);
-    fluid::RealVector        magnitude(binCount);
-    fluid::RealVector        reference(2);
-    std::vector<float>       window(windowSize);
-    int                      disagreements = 0;
+
+    fluid::RealVector frame(windowSize);
+    fluid::RealVector magnitude(binCount);
+    fluid::RealVector reference(2);
+
+    fluid::ComplexVector spectrum(binCount);
+
+    std::vector<float> window(windowSize);
+
+    int disagreements = 0;
 
     analyser.prepare(sampleRate, windowSize, 256, 40, 13);
 
     for (int trial = 0; trial < 200; ++trial) {
-        const double                   fundamental = 50.0 + 1500.0 * random.nextDouble();
-        const double                   noise       = 0.3 * random.nextDouble();
+        const double fundamental   = 50.0 + 1500.0 * random.nextDouble();
+        const double noise         = 0.3 * random.nextDouble();
+        double       referenceNote = 0.0;
+
         TargetAnalyser::TargetFeatures features;
-        double                         referenceNote = 0.0;
 
         for (int sample = 0; sample < windowSize; ++sample) {
             double value = noise * (2.0 * random.nextDouble() - 1.0);

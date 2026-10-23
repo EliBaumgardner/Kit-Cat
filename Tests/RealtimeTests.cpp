@@ -8,14 +8,19 @@
 TEST_CASE("processBlock stays realtime-safe while matching live input, browsing, retuning and republishing", "[realtime]")
 {
     constexpr double sampleRate = 48000.0;
-    constexpr int    blockSize  = 512;
-    constexpr int    blockCount = 600;
 
-    KitCatAudioProcessor     processor;
+    constexpr int blockSize  = 512;
+    constexpr int blockCount = 600;
+
+    KitCatAudioProcessor processor;
+
     juce::AudioBuffer<float> buffer(2, blockSize);
-    juce::MidiBuffer         midi;
-    double                   phase   = 0.0;
-    float                    loudest = 0.0f;
+
+    juce::MidiBuffer midi;
+
+    double phase = 0.0;
+
+    float loudest = 0.0f;
 
     processor.prepareToPlay(sampleRate, blockSize);
     processor.corpusPublisher.publish(std::make_shared<CorpusAnalysis::Result>(makeTestCorpus(300, 5)));
@@ -23,7 +28,8 @@ TEST_CASE("processBlock stays realtime-safe while matching live input, browsing,
 
     for (int block = 0; block < blockCount; ++block) {
         const double frequency = 110.0 * std::pow(2.0, static_cast<double>(block % 48) / 12.0);
-        const bool   silent    = block % 40 >= 34;
+
+        const bool silent = block % 40 >= 34;
 
         if (block % 100 == 50) {
             processor.settings.setProperty(StateIdentifiers::PitchWeight, static_cast<double>(block % 300) / 300.0, nullptr);

@@ -14,19 +14,24 @@ struct TemporaryFolder
 
 TEST_CASE("a saved analysis loads again after its corpus folder has been moved", "[corpus]")
 {
-    TemporaryFolder        temporary;
-    const juce::File       original  = temporary.folder.getChildFile("Recorded");
-    const juce::File       moved     = temporary.folder.getChildFile("Elsewhere").getChildFile("Recorded");
-    const juce::File       audioFile = original.getChildFile("take.wav");
-    CorpusAnalysis::Result corpus    = makeTestCorpus(20, 13);
-    const CorpusAnalysis   analysis;
+    TemporaryFolder temporary;
+
+    const juce::File original  = temporary.folder.getChildFile("Recorded");
+    const juce::File moved     = temporary.folder.getChildFile("Elsewhere").getChildFile("Recorded");
+    const juce::File audioFile = original.getChildFile("take.wav");
+
+    CorpusAnalysis::Result corpus = makeTestCorpus(20, 13);
     CorpusAnalysis::Result loaded;
+
+    const CorpusAnalysis analysis;
 
     REQUIRE(original.createDirectory());
     REQUIRE(moved.getParentDirectory().createDirectory());
 
-    juce::AudioBuffer<float>                 audio(1, static_cast<int>(corpus.fileSamples[0].size()));
-    juce::WavAudioFormat                     wav;
+    juce::AudioBuffer<float> audio(1, static_cast<int>(corpus.fileSamples[0].size()));
+
+    juce::WavAudioFormat wav;
+
     std::unique_ptr<juce::OutputStream>      stream = std::make_unique<juce::FileOutputStream>(audioFile);
     std::unique_ptr<juce::AudioFormatWriter> writer = wav.createWriterFor(stream, juce::AudioFormatWriterOptions().withSampleRate(corpus.sampleRate).withNumChannels(1).withBitsPerSample(32));
 

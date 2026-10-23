@@ -15,11 +15,13 @@ TEST_CASE("CommandFifo hands commands across threads in order, untorn, and flags
     constexpr int commandCount = 200000;
 
     CommandFifo<SequencedCommand, 64> fifo;
-    std::atomic<bool>                 producing { true };
-    int                               received     = 0;
-    int                               lastSequence = -1;
-    int                               outOfOrder   = 0;
-    int                               torn         = 0;
+
+    std::atomic<bool> producing { true };
+
+    int received     = 0;
+    int lastSequence = -1;
+    int outOfOrder   = 0;
+    int torn         = 0;
 
     std::thread producer([&fifo, &producing] {
         for (int sequence = 0; sequence < commandCount; ++sequence) {

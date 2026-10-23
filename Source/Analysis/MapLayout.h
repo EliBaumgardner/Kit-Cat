@@ -18,10 +18,12 @@ public:
 
     fluid::RealMatrix train (const DataSet& descriptors, const std::function<bool()>& shouldStop) const;
 
-    int                         neighbourCount  = 15;
-    double                      minimumDistance = 0.1;
-    int                         iterationCount  = 200;
-    double                      learningRate    = 1.0;
+    int neighbourCount = 15;
+    int iterationCount = 200;
+
+    double minimumDistance = 0.1;
+    double learningRate    = 1.0;
+
     std::optional<unsigned int> seed;
 
 private:
@@ -58,9 +60,11 @@ private:
 
     using MapPoint = Eigen::Array<double, 1, 2>;
 
-    static constexpr fluid::index dimensionCount      = 2;
-    static constexpr int          sigmaIterationCount = 64;
-    static constexpr double       sigmaTolerance      = 1e-5;
-    static constexpr double       negativeSampleRate  = 5.0;
-    static constexpr double       gradientBound       = 4.0;
+    static constexpr fluid::index dimensionCount = 2;
+
+    static constexpr int sigmaIterationCount = 64;
+
+    static constexpr double sigmaTolerance     = 1e-5;
+    static constexpr double negativeSampleRate = 5.0;
+    static constexpr double gradientBound      = 4.0;
 };

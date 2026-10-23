@@ -4,7 +4,8 @@
 
 int main(int argumentCount, char* arguments[])
 {
-    CorpusAnalysis         analysis;
+    CorpusAnalysis analysis;
+
     CorpusAnalysis::Result result;
 
     if (argumentCount < 2) {

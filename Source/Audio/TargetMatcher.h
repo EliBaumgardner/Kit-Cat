@@ -10,9 +10,11 @@ class TargetMatcher
 public:
     struct MatchResult
     {
-        int                sliceIndex = -1;
+        int sliceIndex = -1;
+
         juce::Point<float> mapPosition;
-        float              rms        = 0.0f;
+
+        float rms = 0.0f;
     };
 
     TargetMatcher();
@@ -29,8 +31,9 @@ public:
 private:
     struct Candidate
     {
-        double distance   = 0.0;
-        int    sliceIndex = -1;
+        double distance = 0.0;
+
+        int sliceIndex = -1;
     };
 
     double calculateDistance (int sliceIndex, const CorpusAnalysis::Result& corpus, const std::array<double, TargetAnalyser::maximumCoefficients>& targetMfccs,
@@ -39,6 +42,8 @@ private:
     int selectCandidate (const std::array<Candidate, maximumCandidates>& candidates, size_t count);
 
     std::array<int, recentHistorySize> recentSlices {};
-    size_t                             recentIndex = 0;
-    std::uint32_t                      randomState = 123456789;
+
+    size_t recentIndex = 0;
+
+    std::uint32_t randomState = 123456789;
 };

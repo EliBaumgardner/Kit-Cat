@@ -9,19 +9,26 @@
 
 TEST_CASE("the KD-tree search returns the slice an exhaustive search over the same distance returns", "[matching]")
 {
-    const double                 pitchWeight = GENERATE(0.0, 0.5, 0.9);
-    const CorpusAnalysis::Result corpus      = makeTestCorpus(2000, 7);
-    const int                    coeffCount  = static_cast<int>(corpus.mfccMean.size());
-    juce::Random                 random(11);
-    TargetMatcher                matcher;
-    int                          mismatches  = 0;
+    const double pitchWeight = GENERATE(0.0, 0.5, 0.9);
+
+    const CorpusAnalysis::Result corpus = makeTestCorpus(2000, 7);
+
+    const int coeffCount = static_cast<int>(corpus.mfccMean.size());
+    int       mismatches = 0;
+
+    juce::Random random(11);
+
+    TargetMatcher matcher;
 
     for (int query = 0; query < 300; ++query) {
         TargetAnalyser::TargetFeatures features;
-        std::vector<double>            targetStd(static_cast<size_t>(coeffCount), 0.0);
-        const double                   targetPitch  = 80.0 + 920.0 * random.nextDouble();
-        double                         bestDistance = std::numeric_limits<double>::max();
-        int                            bestSlice    = -1;
+
+        std::vector<double> targetStd(static_cast<size_t>(coeffCount), 0.0);
+
+        const double targetPitch  = 80.0 + 920.0 * random.nextDouble();
+        double       bestDistance = std::numeric_limits<double>::max();
+
+        int bestSlice = -1;
 
         features.rms              = 0.5f;
         features.coefficientCount = coeffCount;
@@ -34,9 +41,10 @@ TEST_CASE("the KD-tree search returns the slice an exhaustive search over the sa
         }
 
         for (size_t slice = 0; slice < corpus.slices.size(); ++slice) {
-            const SliceAnalysis::Slice& sound    = corpus.slices[slice].sound;
-            double                      timbre   = 0.0;
-            double                      distance = 0.0;
+            const SliceAnalysis::Slice& sound = corpus.slices[slice].sound;
+
+            double timbre   = 0.0;
+            double distance = 0.0;
 
             for (int coeff = 1; coeff < coeffCount; ++coeff) {
                 const double diff = targetStd[static_cast<size_t>(coeff)] - corpus.standardizedMfccs[slice * static_cast<size_t>(coeffCount) + static_cast<size_t>(coeff)];

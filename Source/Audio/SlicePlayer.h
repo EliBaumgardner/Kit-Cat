@@ -25,17 +25,19 @@ public:
 
     struct Command
     {
-        CommandKind kind       = CommandKind::Play;
-        int         sliceIndex = -1;
+        CommandKind kind = CommandKind::Play;
+
+        int sliceIndex = -1;
     };
 
     std::atomic<double> fadeSeconds { defaultFadeMilliseconds / 1000.0 };
     std::atomic<double> lengthSeconds { 0.0 };
 
-    static constexpr int    slotCount               = 24;
-    static constexpr int    commandCapacity         = 64;
+    static constexpr int slotCount       = 24;
+    static constexpr int commandCapacity = 64;
+    static constexpr int hannTableSize   = 1024;
+
     static constexpr double defaultFadeMilliseconds = 10.0;
-    static constexpr int    hannTableSize           = 1024;
 
 private:
     struct Slot;
@@ -59,23 +61,30 @@ private:
 
     struct Slot
     {
-        SlotState state          = SlotState::Idle;
-        SlotKind  kind           = SlotKind::Slice;
-        int       fileIndex      = 0;
-        double    position       = 0.0;
-        double    endPosition    = 0.0;
-        double    elapsedSamples = 0.0;
-        double    grainLength    = 0.0;
-        float     fadeGain       = 1.0f;
-        float     targetGain     = 1.0f;
-        int       startDelay     = 0;
+        SlotState state = SlotState::Idle;
+
+        SlotKind kind = SlotKind::Slice;
+
+        int fileIndex  = 0;
+        int startDelay = 0;
+
+        double position       = 0.0;
+        double endPosition    = 0.0;
+        double elapsedSamples = 0.0;
+        double grainLength    = 0.0;
+
+        float fadeGain   = 1.0f;
+        float targetGain = 1.0f;
     };
 
-    juce::AbstractFifo                   commandFifo { commandCapacity };
+    juce::AbstractFifo commandFifo { commandCapacity };
+
     std::array<Command, commandCapacity> commands;
     std::array<Slot, slotCount>          slots;
     std::array<float, hannTableSize + 1> hannTable {};
-    std::uint64_t                        playingGeneration = 0;
-    double                               hostSampleRate    = 44100.0;
-    double                               fadeSamples       = 441.0;
+
+    std::uint64_t playingGeneration = 0;
+
+    double hostSampleRate = 44100.0;
+    double fadeSamples    = 441.0;
 };

@@ -6,10 +6,10 @@
 
 TargetAnalyser::TargetAnalyser()
     : inputBuffer(1024),
-      spectrum(513),
       magnitude(513),
       mels(40),
       coefficients(13),
+      spectrum(513),
       stft(1024, 1024, 256),
       bands(40, 1024),
       dct(40, 13),
@@ -45,8 +45,10 @@ void TargetAnalyser::prepare(double newSampleRate, int newWindowSize, int newHop
 TargetAnalyser::TargetFeatures TargetAnalyser::processFrame(const float* windowSamples, int sampleCount)
 {
     TargetFeatures features;
-    double         sumSquares = 0.0;
-    const int      count      = std::min(sampleCount, windowSize);
+
+    double sumSquares = 0.0;
+
+    const int count = std::min(sampleCount, windowSize);
 
     features.coefficientCount = coefficientCount;
 
@@ -85,12 +87,13 @@ void TargetAnalyser::detectPitch(TargetFeatures& features)
 {
     fluid::index minimumLag = std::lrint(sampleRate / maximumFrequency);
     fluid::index maximumLag = std::lrint(sampleRate / minimumFrequency);
-    double       squareSum  = 0.0;
-    double       runningSum = 0.0;
-    double       floor      = std::numeric_limits<double>::max();
-    double       bestValue  = std::numeric_limits<double>::lowest();
-    double       bestLag    = -1.0;
-    double       pitch      = 0.0;
+
+    double squareSum  = 0.0;
+    double runningSum = 0.0;
+    double floor      = std::numeric_limits<double>::max();
+    double bestValue  = std::numeric_limits<double>::lowest();
+    double bestLag    = -1.0;
+    double pitch      = 0.0;
 
     for (fluid::index bin = 0; bin < binCount; ++bin) {
         squareMagnitude(bin) = magnitude(bin) * magnitude(bin);

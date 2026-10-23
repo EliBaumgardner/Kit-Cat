@@ -34,23 +34,33 @@ private:
     void changeListenerCallback (juce::ChangeBroadcaster* source) override;
     void timerCallback          () override;
 
-    AudioUIBridge&                         audioUIBridge;
-    CorpusPublisher&                       corpusPublisher;
-    SlicePlayer&                           slicePlayer;
-    CorpusLoader&                          corpusLoader;
-    juce::ValueTree                        settings;
-    juce::ValueTree                        colourPresets;
-    juce::UndoManager&                     undoManager;
-    ArsNovaUI::CustomLookAndFeel           lookAndFeel;
-    std::unique_ptr<juce::PropertiesFile>  interfaceSettings;
-    juce::Component                        workspace;
+    AudioUIBridge&     audioUIBridge;
+    CorpusPublisher&   corpusPublisher;
+    SlicePlayer&       slicePlayer;
+    CorpusLoader&      corpusLoader;
+    juce::UndoManager& undoManager;
+
+    juce::ValueTree settings;
+    juce::ValueTree colourPresets;
+
+    ArsNovaUI::CustomLookAndFeel lookAndFeel;
+
+    std::unique_ptr<juce::PropertiesFile> interfaceSettings;
+
+    juce::Component workspace;
+
     std::unique_ptr<ArsNovaUI::ScaledView> scaledView;
-    ArsNovaUI::PopupWindowLauncher         settingsLauncher { "Settings" };
-    CorpusBar                              corpusBar;
-    ParameterPanel                         parameterPanel;
-    CorpusMap                              corpusMap;
     std::unique_ptr<juce::FileChooser>     fileChooser;
-    int                                    panelWidth = ParameterPanel::defaultWidth;
+
+    ArsNovaUI::PopupWindowLauncher settingsLauncher { "Settings" };
+
+    CorpusBar corpusBar;
+
+    ParameterPanel parameterPanel;
+
+    CorpusMap corpusMap;
+
+    int panelWidth = ParameterPanel::defaultWidth;
 
     static constexpr int minimumMapWidth   = 240;
     static constexpr int minimumMapHeight  = 200;

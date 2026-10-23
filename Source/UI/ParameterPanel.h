@@ -29,27 +29,32 @@ private:
     void paintOverBar             (juce::Graphics& graphics) override;
     void valueTreePropertyChanged (juce::ValueTree& tree, const juce::Identifier& property) override;
 
-    juce::ValueTree                     settings;
-    juce::UndoManager&                  undoManager;
-    ArsNovaUI::CaptionLabel             analysisHeading;
-    ArsNovaUI::CaptionLabel             slicingModeLabel;
-    ArsNovaUI::ItemSelector             slicingModeSelector;
-    ArsNovaUI::LabeledEditor            thresholdEditor;
-    ArsNovaUI::CaptionLabel             metricLabel;
-    ArsNovaUI::ItemSelector             metricSelector;
-    ArsNovaUI::LabeledEditor            minimumSliceEditor;
-    ArsNovaUI::LabeledEditor            coefficientEditor;
-    ArsNovaUI::LabeledEditor            neighbourEditor;
-    ArsNovaUI::LabeledEditor            minimumDistanceEditor;
-    ArsNovaUI::CaptionLabel             liveMatchingHeading;
-    ArsNovaUI::CaptionLabel             liveMatchingLabel;
-    ArsNovaUI::ItemSelector             liveMatchingSelector;
-    ArsNovaUI::LabeledEditor            gateThresholdEditor;
-    ArsNovaUI::LabeledEditor            pitchWeightEditor;
-    ArsNovaUI::LabeledEditor            candidateCountEditor;
-    ArsNovaUI::LabeledEditor            repetitionPenaltyEditor;
-    ArsNovaUI::CaptionLabel             playbackHeading;
-    ArsNovaUI::LabeledEditor            fadeEditor;
-    ArsNovaUI::LabeledEditor            lengthEditor;
+    juce::ValueTree settings;
+
+    juce::UndoManager& undoManager;
+
+    ArsNovaUI::CaptionLabel analysisHeading;
+    ArsNovaUI::CaptionLabel slicingModeLabel;
+    ArsNovaUI::CaptionLabel metricLabel;
+    ArsNovaUI::CaptionLabel liveMatchingHeading;
+    ArsNovaUI::CaptionLabel liveMatchingLabel;
+    ArsNovaUI::CaptionLabel playbackHeading;
+
+    ArsNovaUI::ItemSelector slicingModeSelector;
+    ArsNovaUI::ItemSelector metricSelector;
+    ArsNovaUI::ItemSelector liveMatchingSelector;
+
+    ArsNovaUI::LabeledEditor thresholdEditor;
+    ArsNovaUI::LabeledEditor minimumSliceEditor;
+    ArsNovaUI::LabeledEditor coefficientEditor;
+    ArsNovaUI::LabeledEditor neighbourEditor;
+    ArsNovaUI::LabeledEditor minimumDistanceEditor;
+    ArsNovaUI::LabeledEditor gateThresholdEditor;
+    ArsNovaUI::LabeledEditor pitchWeightEditor;
+    ArsNovaUI::LabeledEditor candidateCountEditor;
+    ArsNovaUI::LabeledEditor repetitionPenaltyEditor;
+    ArsNovaUI::LabeledEditor fadeEditor;
+    ArsNovaUI::LabeledEditor lengthEditor;
+
     std::array<juce::Rectangle<int>, 3> sectionBounds;
 };

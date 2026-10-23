@@ -13,9 +13,12 @@ CorpusMap::CorpusMap()
 void CorpusMap::paint(juce::Graphics& g)
 {
     ArsNovaUI::CustomLookAndFeel& lookAndFeel = ArsNovaUI::CustomLookAndFeel::get(*this);
-    const juce::Rectangle<float>  area        = getLocalBounds().toFloat().reduced(margin);
-    const juce::AffineTransform   mapToScreen = juce::AffineTransform::scale(area.getWidth(), -area.getHeight()).translated(area.getX(), area.getBottom()).followedBy(viewTransform);
-    ArsNovaUI::CanvasGrid         grid;
+
+    const juce::Rectangle<float> area = getLocalBounds().toFloat().reduced(margin);
+
+    const juce::AffineTransform mapToScreen = juce::AffineTransform::scale(area.getWidth(), -area.getHeight()).translated(area.getX(), area.getBottom()).followedBy(viewTransform);
+
+    ArsNovaUI::CanvasGrid grid;
 
     grid.bounds         = getLocalBounds().toFloat();
     grid.modelTransform = viewTransform.inverted();
@@ -27,13 +30,16 @@ void CorpusMap::paint(juce::Graphics& g)
 
     if (corpus != nullptr) {
         for (size_t sliceIndex = 0; sliceIndex < corpus->slices.size(); ++sliceIndex) {
-            const CorpusAnalysis::Slice& slice            = corpus->slices[sliceIndex];
-            const juce::Point<float>     centre           = slice.position.transformedBy(mapToScreen);
-            const juce::Point<float>     offsetFromMiddle = slice.position - juce::Point<float>(0.5f, 0.5f);
-            const float                  hue              = (std::atan2(offsetFromMiddle.y, offsetFromMiddle.x) + juce::MathConstants<float>::pi) / juce::MathConstants<float>::twoPi;
-            const float                  saturation       = 0.25f + 0.65f * std::min(1.0f, offsetFromMiddle.getDistanceFromOrigin() * 2.0f);
-            juce::Colour                 colour           = juce::Colour::fromHSV(hue, saturation, 0.95f, 1.0f);
-            float                        diameter         = dotDiameter;
+            const CorpusAnalysis::Slice& slice = corpus->slices[sliceIndex];
+
+            const juce::Point<float> centre           = slice.position.transformedBy(mapToScreen);
+            const juce::Point<float> offsetFromMiddle = slice.position - juce::Point<float>(0.5f, 0.5f);
+
+            const float hue        = (std::atan2(offsetFromMiddle.y, offsetFromMiddle.x) + juce::MathConstants<float>::pi) / juce::MathConstants<float>::twoPi;
+            const float saturation = 0.25f + 0.65f * std::min(1.0f, offsetFromMiddle.getDistanceFromOrigin() * 2.0f);
+            float       diameter   = dotDiameter;
+
+            juce::Colour colour = juce::Colour::fromHSV(hue, saturation, 0.95f, 1.0f);
 
             if (state == MapState::Frozen) {
                 colour = colour.withSaturation(0.0f).withMultipliedAlpha(0.4f);
@@ -63,8 +69,9 @@ void CorpusMap::paint(juce::Graphics& g)
     }
 
     if (livePuckActive && livePuckPosition.has_value()) {
-        const juce::Point<float> puckCentre   = livePuckPosition->transformedBy(mapToScreen);
-        const float              haloDiameter = 14.0f + std::clamp(livePuckRms * 60.0f, 0.0f, 30.0f);
+        const juce::Point<float> puckCentre = livePuckPosition->transformedBy(mapToScreen);
+
+        const float haloDiameter = 14.0f + std::clamp(livePuckRms * 60.0f, 0.0f, 30.0f);
 
         g.setColour(lookAndFeel.accentColour.withAlpha(0.25f + 0.4f * std::clamp(livePuckRms * 4.0f, 0.0f, 1.0f)));
         g.fillEllipse(juce::Rectangle<float>(haloDiameter, haloDiameter).withCentre(puckCentre));
@@ -208,10 +215,13 @@ void CorpusMap::updateFlashes()
 
 int CorpusMap::nearestSlice(juce::Point<float> position) const
 {
-    const juce::Rectangle<float> area            = getLocalBounds().toFloat().reduced(margin);
-    const juce::AffineTransform  mapToScreen     = juce::AffineTransform::scale(area.getWidth(), -area.getHeight()).translated(area.getX(), area.getBottom()).followedBy(viewTransform);
-    int                          nearest         = -1;
-    float                        nearestDistance = pickRadius;
+    const juce::Rectangle<float> area = getLocalBounds().toFloat().reduced(margin);
+
+    const juce::AffineTransform mapToScreen = juce::AffineTransform::scale(area.getWidth(), -area.getHeight()).translated(area.getX(), area.getBottom()).followedBy(viewTransform);
+
+    int nearest = -1;
+
+    float nearestDistance = pickRadius;
 
     if (corpus == nullptr || state == MapState::Frozen) {
         return nearest;

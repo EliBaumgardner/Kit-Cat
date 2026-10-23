@@ -44,13 +44,18 @@ public:
     int getNumPrograms    () override;
     int getCurrentProgram () override;
 
-    juce::UndoManager   undoManager;
-    juce::ValueTree     settings { StateIdentifiers::KitCatState };
-    juce::ValueTree     colourPresets { ArsNovaUI::InterfaceIdentifiers::ColourPresets };
-    CorpusPublisher     corpusPublisher;
-    SlicePlayer         slicePlayer;
-    CorpusLoader        corpusLoader;
-    AudioUIBridge       audioUIBridge;
+    juce::UndoManager undoManager;
+
+    juce::ValueTree settings { StateIdentifiers::KitCatState };
+    juce::ValueTree colourPresets { ArsNovaUI::InterfaceIdentifiers::ColourPresets };
+
+    CorpusPublisher corpusPublisher;
+
+    SlicePlayer slicePlayer;
+
+    CorpusLoader corpusLoader;
+
+    AudioUIBridge audioUIBridge;
 
     std::atomic<bool>   liveMatchingEnabled { false };
     std::atomic<float>  inputGateThresholdDb { -40.0f };
@@ -65,10 +70,13 @@ public:
 private:
     void valueTreePropertyChanged (juce::ValueTree& tree, const juce::Identifier& property) override;
 
-    TargetAnalyser                         targetAnalyser;
-    TargetMatcher                          targetMatcher;
+    TargetAnalyser targetAnalyser;
+
+    TargetMatcher targetMatcher;
+
     std::array<float, inputRingBufferSize> inputRingBuffer {};
     std::array<float, targetWindowSize>    inputWindow {};
-    int                                    inputWritePos = 0;
-    int                                    hopCounter    = 0;
+
+    int inputWritePos = 0;
+    int hopCounter    = 0;
 };

@@ -25,10 +25,12 @@ CorpusBar::CorpusBar()
 
 void CorpusBar::resized()
 {
-    const ArsNovaUI::CustomLookAndFeel& lookAndFeel   = ArsNovaUI::CustomLookAndFeel::get(*this);
-    juce::Rectangle<int>                bounds        = getContentBounds();
-    const int                           paneWidth     = filePane.idealWidth(bounds.getHeight());
-    const int                           settingsWidth = settingsPane.idealWidth(bounds.getHeight());
+    const ArsNovaUI::CustomLookAndFeel& lookAndFeel = ArsNovaUI::CustomLookAndFeel::get(*this);
+
+    juce::Rectangle<int> bounds = getContentBounds();
+
+    const int paneWidth     = filePane.idealWidth(bounds.getHeight());
+    const int settingsWidth = settingsPane.idealWidth(bounds.getHeight());
 
     statusLabel.setFont(lookAndFeel.font(ArsNovaUI::Theme::FontStyle::Regular, ArsNovaUI::Theme::textHeight));
     statusLabel.setColour(juce::Label::textColourId, lookAndFeel.softTextColour);
