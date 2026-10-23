@@ -5,6 +5,25 @@
 #include <functional>
 #include <vector>
 
+/*
+    The settings and steps that cut one audio file into slices and describe each slice's sound. A
+    Result holds the file's samples, mixed to mono and resampled to sampleRate, and its Slices. A
+    Slice holds its start and end sample, its MFCCs averaged over the frames it covers, and its
+    pitch in Hz with a confidence from 0 to 1.
+
+    analyse reads the file and goes through it a frame at a time (windowSize samples every
+    hopSize), taking MFCCs, pitch and, in SlicingMode::Onset, onsets. Onset mode cuts at every
+    onset onsetMetric finds above threshold, at least minimumSliceFrames apart, so the slices cover
+    the whole file. Granular mode cuts grains of grainSizeMilliseconds every grainHopMilliseconds,
+    which overlap when the hop is shorter, and leaves out a last grain the file ends inside. A
+    slice's pitch averages only the frames with confidence above voicedConfidence, weighted by it,
+    and is 0 when there are none. readMonoSamples is the reading step alone. analyse asks
+    shouldStop on every frame and returns stoppedError when it answers true.
+
+    CorpusAnalysis holds one as slicing, set by CorpusLoader::readSettings, runs it on each file on
+    CorpusLoader's worker thread, and calls readMonoSamples to load a saved analysis.
+*/
+
 class SliceAnalysis
 {
 public:

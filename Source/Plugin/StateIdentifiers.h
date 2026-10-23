@@ -2,6 +2,15 @@
 
 #include <juce_data_structures/juce_data_structures.h>
 
+/*
+    The keys of the settings ValueTree: KitCatState is its type, and each other identifier names one
+    of its properties. CorpusPath and the slicing, MFCC and map keys are read by the next analysis
+    (CorpusLoader::readSettings). The live matching and playback keys are copied into the atomics
+    the audio thread reads (KitCatAudioProcessor::valueTreePropertyChanged). ParameterPanel binds
+    its controls to them. The strings are written into every saved project, so a renamed key is
+    lost from projects saved before.
+*/
+
 class StateIdentifiers
 {
 public:

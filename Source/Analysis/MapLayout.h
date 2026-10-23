@@ -11,6 +11,23 @@
 #include <random>
 #include <string>
 
+/*
+    The settings and steps that place points on a 2D map so that points with similar descriptors
+    land near each other. train takes one row of descriptors per point and returns one row of two
+    coordinates per point, in no fixed range; CorpusAnalysis scales them to 0 to 1.
+
+    The method is UMAP, ported from FluCoMa's UMAP::train so that it can stop part-way. It links
+    each point to its neighbourCount nearest points, weighting each link by how near they are,
+    makes a starting layout from those links, and then over iterationCount rounds pulls linked
+    points together and pushes randomly chosen points apart, in steps that shrink from
+    learningRate toward zero. minimumDistance sets how tightly close points may pack. seed fixes
+    the random choices; when it is empty, each run differs.
+
+    CorpusAnalysis holds one as layout and runs it on CorpusLoader's worker thread. train asks
+    shouldStop for every point while linking and on every round, and returns an empty matrix when
+    it answers true. MapLayoutTests checks it against FluCoMa's UMAP::train with the same seed.
+*/
+
 class MapLayout
 {
 public:

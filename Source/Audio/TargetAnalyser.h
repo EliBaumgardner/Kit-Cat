@@ -9,6 +9,22 @@
 
 #include <array>
 
+/*
+    The analyser of one window of live input. From up to windowSize samples it produces a
+    TargetFeatures: the window's level (rms), its MFCCs (coefficients describing the shape of its
+    spectrum, of the same kind SliceAnalysis keeps for each slice), and its pitch as a fractional
+    MIDI note with a confidence from 0 to 1.
+
+    prepare sets the sample rate and the window, hop, mel band and coefficient counts, and sizes
+    every buffer; it allocates, so it runs from prepareToPlay. processFrame analyses one window
+    into those buffers without allocating. A window quieter than 1e-5 gets its level only, with no
+    MFCCs or pitch. The pitch step is FluCoMa's YINFFT rewritten onto the buffers prepare made,
+    because FluCoMa's own version allocates on every frame.
+
+    KitCatAudioProcessor::processBlock calls processFrame on the audio thread once per hop, on the
+    last 1024 input samples, and passes the result to TargetMatcher.
+*/
+
 class TargetAnalyser
 {
 public:

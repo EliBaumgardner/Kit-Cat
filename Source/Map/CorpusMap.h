@@ -9,6 +9,23 @@
 #include <optional>
 #include <vector>
 
+/*
+    The map of a corpus: a component that draws every slice of a CorpusAnalysis::Result as a dot at
+    its map position, coloured by where it sits, with the live input's puck and a fading ring
+    around each slice the live engine just played. It holds the corpus by shared_ptr, so the
+    corpus it draws lives as long as it does.
+
+    The dot nearest the mouse, within pickRadius, is drawn larger; pressing or dragging plays it
+    through onSlicePicked, once for each dot passed over. Scrolling pans, Shift+scroll or a pinch
+    zooms around the cursor, and a double-click shows the whole map again. setLivePuck and
+    flashSlice take what the editor drained from AudioUIBridge, and updateFlashes, called each
+    frame, fades the rings and repaints. While state is Frozen the dots turn grey, a spinner shows
+    and the mouse plays nothing.
+
+    KitCatAudioProcessorEditor sets corpus and state when CorpusLoader changes, and connects
+    onSlicePicked to SlicePlayer::push.
+*/
+
 class CorpusMap : public juce::Component
 {
 public:

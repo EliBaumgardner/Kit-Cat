@@ -9,6 +9,26 @@
 #include <functional>
 #include <vector>
 
+/*
+    The analysis of a corpus (a sample, or a folder of samples searched through its subfolders) and
+    the Result it produces. A Result holds the audio files, each file's samples as mono at
+    sampleRate, and the slices cut from them; each Slice names its file, its span and sound
+    (SliceAnalysis::Slice) and its map position, 0 to 1 on each axis. It also holds the index live
+    matching searches: every slice's MFCCs standardised with mfccMean and mfccStdDev (in
+    standardizedMfccs, one row per slice), its pitch as a MIDI note (pitchNotes, 0 when it has
+    none), and a kdTree over the standardised MFCCs. error is empty unless something failed.
+
+    analyse cuts every file with slicing, places the slices with layout, then calls buildIndex;
+    fewer than 7 slices is an error. load rebuilds a Result from a saved JSON analysis: it reads the
+    audio again, from the saved path or else the one relative to the analysis file, refuses a file
+    whose length changed, keeps the saved map positions and calls buildIndex. save writes one and
+    returns an error message, empty on success. describe gives a one-line status and summarise
+    lists every slice. When shouldStop answers true, the analysis ends with stoppedError.
+
+    CorpusLoader runs analyse and load on its worker thread and publishes the Result through
+    CorpusPublisher, after which nothing changes it. KitCatProbe runs analyse from the command line.
+*/
+
 class CorpusAnalysis
 {
 public:

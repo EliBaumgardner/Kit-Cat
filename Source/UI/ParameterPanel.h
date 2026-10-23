@@ -9,6 +9,20 @@
 
 #include <array>
 
+/*
+    The panel of Kit-Cat's settings, in three sections drawn as panes: Analysis (slicing mode,
+    onset threshold and metric, shortest slice, MFCC coefficients, map neighbours and minimum
+    distance), Live input matching (on or off, input gate, pitch weight, variation, repetition
+    penalty) and Playback (crossfade and slice length). Each control writes one property of the
+    settings ValueTree through the undo manager, under its StateIdentifiers key.
+
+    The value editors are bound to their properties, and the three selectors follow theirs through
+    valueTreePropertyChanged, so every control shows an undo or a restored state. Analysis settings
+    take effect at the next analysis, the others at once through KitCatAudioProcessor's atomics.
+    resizer, on the left edge, reports drags to KitCatAudioProcessorEditor, which keeps the width
+    between minimumWidth and maximumWidth.
+*/
+
 class ParameterPanel : public ArsNovaUI::Bar, private juce::ValueTree::Listener
 {
 public:

@@ -15,6 +15,21 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 
+/*
+    The plugin's window: the corpus bar along the top, the map, and the parameter panel on the
+    right, whose width the user drags. It exists only while the window is open, and reaches the
+    processor through references to the parts it uses, taken in its constructor.
+
+    It connects the components to the processor. The corpus bar's buttons open file choosers and
+    call CorpusLoader, or open ArsNovaUI's SettingsMenu; a slice picked on the map is pushed to
+    SlicePlayer as Play. As a change listener on CorpusLoader it shows the status text, hands
+    CorpusMap the published corpus and freezes the map while an analysis runs. Its 60 Hz timer
+    drains AudioUIBridge's flashes and pucks into CorpusMap and fades the flashes.
+
+    Interface zoom and theme colour are saved in interfaceSettings, a file on this computer rather
+    than in the project, and ScaledView scales the whole workspace by the zoom.
+*/
+
 class KitCatAudioProcessor;
 
 class KitCatAudioProcessorEditor : public juce::AudioProcessorEditor, private juce::ChangeListener, private juce::Timer

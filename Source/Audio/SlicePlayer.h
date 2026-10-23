@@ -7,6 +7,27 @@
 #include <array>
 #include <atomic>
 
+/*
+    The player of corpus audio: 24 slots, each playing one slice's span of a corpus file into the
+    output, either as a slice the map asked for or as a grain the live engine chose. A slice fades
+    in and out over fadeSeconds; a grain is shaped by a Hann window over its whole length and
+    played at the gain it was given. Every slot reads its file at the corpus's sample rate
+    converted to the host's, and writes the same mono signal to each output channel. Both play to
+    the slice's end, unless lengthSeconds is above zero, which sets the length from its start.
+
+    prepare sets the host sample rate, empties the slots and fills the window table. push, on the
+    message thread, queues a Command: Play fades out the slices playing and starts a new one, and
+    FadeOutAll only fades them out; grains are never faded. triggerGrain, on the audio thread,
+    starts a grain at a sample within the block, in a free slot or else the one playing longest.
+    render takes the queued commands and mixes every playing slot into the buffer.
+
+    The editor pushes Play from CorpusMap's onSlicePicked, CorpusLoader pushes FadeOutAll when a job
+    starts, and KitCatAudioProcessor::processBlock triggers grains and calls render; the processor
+    stores fadeSeconds and lengthSeconds from the settings. When the corpus's generation changes,
+    render empties every slot first, so no slot reads a corpus that has gone. A command pushed
+    while the 64-entry queue is full is dropped.
+*/
+
 class SlicePlayer
 {
 public:

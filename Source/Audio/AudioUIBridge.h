@@ -7,6 +7,24 @@
 #include <atomic>
 #include <concepts>
 
+/*
+    The one-way channel from the audio thread to the map, which is how live matching is shown on
+    screen. It holds two CommandFifos of plain structs: puckFifo carries LivePucks (the map
+    position of the slice the input matched, the input's level, and whether the input was above
+    the gate) and flashFifo carries SliceFlashes (the index of a slice that just started as a
+    grain).
+
+    A CommandFifo is a queue of fixed size with one thread writing and one reading. push copies a
+    command in, or drops it and sets overflowed when the queue is full, so the writer never waits.
+    drain hands every waiting command, oldest first, to the function it is given, and hasPending
+    says whether any are waiting.
+
+    KitCatAudioProcessor::processBlock calls pushFlash and pushPuck for each grain it starts, and
+    pushPuck with active false when the input is below the gate. The editor's 60 Hz timerCallback
+    drains both queues into CorpusMap on the message thread. With no editor open the 64-entry
+    queues fill and drop what follows; the audio thread never locks, allocates or posts a message.
+*/
+
 template <typename Command, int Capacity = 256>
 class CommandFifo
 {
