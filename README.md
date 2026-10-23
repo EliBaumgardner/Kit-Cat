@@ -1,6 +1,6 @@
 # Kit-Cat
 
-Kit-Cat is a real-time audio mosaicing instrument: it rebuilds a live input out of short pieces of your own samples. You give it a folder of sounds and play or sing into it, and about 170 times a second it plays the piece of those sounds that most resembles the input's timbre and pitch. A voice fed into a corpus of drum hits comes out as drum hits that rise and fall with the voice. Nothing of the input itself is heard.
+Kit-Cat is a real-time audio mosaicing instrument: it rebuilds a live input out of short pieces of your own samples. You give it a folder of sounds and play or sing into it, and it plays the piece of those sounds that most resembles the input's timbre and pitch. A voice fed into a corpus of drum hits comes out as drum hits that rise and fall with the voice. Nothing of the input itself is heard.
 
 It runs as a standalone app, an AU and a VST3, written in C++20 with [JUCE](https://juce.com/) and [FluCoMa](https://www.flucoma.org/).
 
@@ -59,14 +59,3 @@ cmake --build build --target KitCat_Standalone
 The app lands in `build/KitCat_artefacts/Release/Standalone/`. `KitCat_AU` and `KitCat_VST3` also install into `~/Library/Audio/Plug-Ins`. Build `KitCat_Tests`, then run `ctest --test-dir build`.
 
 The live engine runs on the audio thread without allocating, locking or waiting, which a RealtimeSanitizer test checks. [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) covers the threads, the matching, latency and tests.
-
-## Limitations
-
-- Built and tested on macOS (Apple Silicon) only.
-- Live input is tested in the standalone app. Routing audio into an instrument plugin depends on the host.
-- Pitch matching is coarse below about 200 Hz: a 23 ms window reads a 220 Hz tone about a third of a semitone sharp.
-- Grains fade in over half their length, softening the attack of what you play.
-
-## Credits
-
-Analysis from [FluCoMa](https://www.flucoma.org/) (University of Huddersfield), framework [JUCE](https://juce.com/), interface components [ArsNovaUI](https://github.com/EliBaumgardner/ArsNovaUI), tests [Catch2](https://github.com/catchorg/Catch2).
