@@ -8,3 +8,4 @@ cmake-build-*/
 .opencode/
 CLAUDE.md
 CLAUDE.local.md
+docs/

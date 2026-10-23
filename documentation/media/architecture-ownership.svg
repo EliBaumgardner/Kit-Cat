@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900"><defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4d4d4d"/></marker></defs><rect width="1280" height="900" fill="#ffffff"/>
+<rect x="20" y="20" width="760" height="836" rx="12" fill="#fafafa" stroke="#333333" stroke-width="1.6"/>
+<text x="40" y="50" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#111" text-anchor="start">KitCatAudioProcessor</text>
+<text x="40" y="68" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#555" text-anchor="start">Source/Plugin · created by the host, lives as long as the plugin instance, works with no window open</text>
+<rect x="40" y="84" width="720" height="104" rx="10" fill="#eaf1fb" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="56" y="104" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#4a78c2" text-anchor="start">1  Settings: the saved state, edited on the message thread · Source/Plugin</text>
+<rect x="56" y="116" width="250" height="58" rx="8" fill="#ffffff" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="68" y="136" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">settings</text>
+<text x="68" y="152" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">ValueTree · every setting and the corpus path</text>
+<rect x="320" y="116" width="210" height="58" rx="8" fill="#ffffff" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="332" y="136" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">colourPresets</text>
+<text x="332" y="152" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">ValueTree · theme presets</text>
+<rect x="544" y="116" width="200" height="58" rx="8" fill="#ffffff" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="556" y="136" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">undoManager</text>
+<text x="556" y="152" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">UndoManager</text>
+<rect x="40" y="204" width="720" height="196" rx="10" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.4"/>
+<text x="56" y="224" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#8a5cc7" text-anchor="start">2  Corpus: analysed on a worker thread, published to the audio thread</text>
+<rect x="56" y="236" width="340" height="150" rx="8" fill="#ffffff" stroke="#8a5cc7" stroke-width="1.4"/>
+<text x="68" y="256" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">CorpusLoader corpusLoader</text>
+<text x="68" y="272" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">Source/Plugin · starts one analysis job at a time</text>
+<rect x="68" y="270" width="316" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="78" y="286" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">ThreadPool analysisPool (1 thread)</text>
+<rect x="68" y="298" width="316" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="78" y="314" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">CorpusAnalysis, built per job (Analysis)</text>
+<rect x="68" y="326" width="316" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="78" y="342" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">  SliceAnalysis slicing</text>
+<rect x="68" y="354" width="316" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="78" y="370" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">  MapLayout layout</text>
+<rect x="410" y="236" width="334" height="150" rx="8" fill="#ffffff" stroke="#8a5cc7" stroke-width="1.4"/>
+<text x="422" y="256" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">CorpusPublisher corpusPublisher</text>
+<text x="422" y="272" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">Source/Audio · the corpus the audio thread reads</text>
+<rect x="422" y="270" width="310" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="432" y="286" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">shared_ptr publishedCorpus</text>
+<rect x="422" y="298" width="310" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="432" y="314" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">atomic Result* currentCorpus</text>
+<rect x="422" y="326" width="310" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="432" y="342" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">atomic blockEpoch</text>
+<rect x="422" y="354" width="310" height="24" rx="5" fill="#f2ecfb" stroke="#8a5cc7" stroke-width="1.1"/>
+<text x="432" y="370" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">vector retiredCorpora</text>
+<rect x="40" y="416" width="720" height="270" rx="10" fill="#fbf0ea" stroke="#c7783a" stroke-width="1.4"/>
+<text x="56" y="436" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#c7783a" text-anchor="start">3  Live engine: runs inside processBlock, never allocates · Source/Audio</text>
+<rect x="56" y="448" width="220" height="86" rx="8" fill="#ffffff" stroke="#c7783a" stroke-width="1.4"/>
+<text x="68" y="468" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">TargetAnalyser</text>
+<text x="68" y="484" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">targetAnalyser · level, MFCCs,</text>
+<text x="68" y="498" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">YIN-FFT pitch of one window</text>
+<text x="68" y="512" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">(FluCoMa STFT, mel, DCT)</text>
+<rect x="290" y="448" width="220" height="86" rx="8" fill="#ffffff" stroke="#c7783a" stroke-width="1.4"/>
+<text x="302" y="468" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">TargetMatcher</text>
+<text x="302" y="484" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">targetMatcher · KD-tree k-nearest,</text>
+<text x="302" y="498" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">weighted pick, recentSlices</text>
+<text x="302" y="512" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">for the repetition penalty</text>
+<rect x="524" y="448" width="220" height="86" rx="8" fill="#ffffff" stroke="#c7783a" stroke-width="1.4"/>
+<text x="536" y="468" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">SlicePlayer</text>
+<text x="536" y="484" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">slicePlayer · 24 grain slots,</text>
+<text x="536" y="498" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">commandFifo from the map,</text>
+<text x="536" y="512" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">Hann lookup table</text>
+<rect x="56" y="548" width="330" height="124" rx="8" fill="#ffffff" stroke="#c7783a" stroke-width="1.4"/>
+<text x="68" y="568" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">input buffers</text>
+<text x="68" y="584" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">inputRingBuffer (4096 samples)</text>
+<text x="68" y="598" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">inputWindow (1024 samples)</text>
+<text x="68" y="612" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">inputWritePos, hopCounter</text>
+<text x="68" y="626" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">one hop every 256 samples</text>
+<rect x="400" y="548" width="344" height="124" rx="8" fill="#ffffff" stroke="#c7783a" stroke-width="1.4"/>
+<text x="412" y="568" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">live settings, as atomics</text>
+<text x="412" y="584" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">liveMatchingEnabled</text>
+<text x="412" y="598" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">inputGateThresholdDb</text>
+<text x="412" y="612" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">pitchWeight, candidateCount</text>
+<text x="412" y="626" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">repetitionPenalty</text>
+<text x="412" y="640" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">stored by valueTreePropertyChanged</text>
+<rect x="40" y="702" width="720" height="138" rx="10" fill="#e9f5ee" stroke="#3f9a6b" stroke-width="1.4"/>
+<text x="56" y="722" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#3f9a6b" text-anchor="start">4  Output channels: written on the audio thread, read elsewhere</text>
+<rect x="56" y="734" width="340" height="92" rx="8" fill="#ffffff" stroke="#3f9a6b" stroke-width="1.4"/>
+<text x="68" y="754" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">AudioUIBridge audioUIBridge</text>
+<text x="68" y="770" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">Source/Audio · lock-free, drops when full</text>
+<rect x="68" y="768" width="316" height="24" rx="5" fill="#e9f5ee" stroke="#3f9a6b" stroke-width="1.1"/>
+<text x="78" y="784" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">CommandFifo&lt;LivePuck&gt; puckFifo</text>
+<rect x="68" y="796" width="316" height="24" rx="5" fill="#e9f5ee" stroke="#3f9a6b" stroke-width="1.1"/>
+<text x="78" y="812" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">CommandFifo&lt;SliceFlash&gt; flashFifo</text>
+<rect x="410" y="734" width="334" height="92" rx="8" fill="#ffffff" stroke="#3f9a6b" stroke-width="1.4"/>
+<text x="422" y="754" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">juce::AudioBuffer</text>
+<text x="422" y="770" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">back to the host: the input is cleared</text>
+<text x="422" y="784" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">and the grains are mixed in</text>
+<rect x="800" y="20" width="460" height="836" rx="12" fill="#fafafa" stroke="#333333" stroke-width="1.6"/>
+<text x="820" y="50" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="16" font-weight="700" fill="#111" text-anchor="start">KitCatAudioProcessorEditor</text>
+<text x="820" y="68" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#555" text-anchor="start">Source/Plugin · made by createEditor, lives while the window is open</text>
+<rect x="820" y="84" width="420" height="302" rx="10" fill="#eaf1fb" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="836" y="104" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#4a78c2" text-anchor="start">Views · Source/UI, Source/Map</text>
+<rect x="836" y="116" width="388" height="72" rx="8" fill="#ffffff" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="848" y="136" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">CorpusBar corpusBar</text>
+<text x="848" y="152" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">Load, Analyse again, Save, Load analysis,</text>
+<text x="848" y="166" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">Settings; the loader&#x27;s status text</text>
+<rect x="836" y="200" width="388" height="72" rx="8" fill="#ffffff" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="848" y="220" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">ParameterPanel parameterPanel</text>
+<text x="848" y="236" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">every setting, edited through settings;</text>
+<text x="848" y="250" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">PanelResizer resizer sets its width</text>
+<rect x="836" y="284" width="388" height="86" rx="8" fill="#ffffff" stroke="#4a78c2" stroke-width="1.4"/>
+<text x="848" y="304" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12.5" font-weight="700" fill="#1f1f1f" text-anchor="start">CorpusMap corpusMap</text>
+<text x="848" y="320" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">one dot per slice, the live puck, flashes;</text>
+<text x="848" y="334" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">the mouse plays the nearest dot;</text>
+<text x="848" y="348" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">holds the published corpus by shared_ptr</text>
+<rect x="820" y="402" width="420" height="218" rx="10" fill="#f3f3f3" stroke="#6b6b6b" stroke-width="1.4"/>
+<text x="836" y="422" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#6b6b6b" text-anchor="start">Window plumbing</text>
+<rect x="836" y="434" width="388" height="24" rx="5" fill="#ffffff" stroke="#6b6b6b" stroke-width="1.1"/>
+<text x="846" y="450" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">CustomLookAndFeel lookAndFeel</text>
+<rect x="836" y="462" width="388" height="24" rx="5" fill="#ffffff" stroke="#6b6b6b" stroke-width="1.1"/>
+<text x="846" y="478" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">PropertiesFile interfaceSettings</text>
+<rect x="836" y="490" width="388" height="24" rx="5" fill="#ffffff" stroke="#6b6b6b" stroke-width="1.1"/>
+<text x="846" y="506" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">Component workspace + ScaledView</text>
+<rect x="836" y="518" width="388" height="24" rx="5" fill="#ffffff" stroke="#6b6b6b" stroke-width="1.1"/>
+<text x="846" y="534" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">PopupWindowLauncher settingsLauncher</text>
+<rect x="836" y="546" width="388" height="24" rx="5" fill="#ffffff" stroke="#6b6b6b" stroke-width="1.1"/>
+<text x="846" y="562" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">FileChooser fileChooser</text>
+<rect x="836" y="574" width="388" height="24" rx="5" fill="#ffffff" stroke="#6b6b6b" stroke-width="1.1"/>
+<text x="846" y="590" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">Timer at 60 Hz: drains the bridge</text>
+<rect x="820" y="636" width="420" height="204" rx="10" fill="#fbf0ea" stroke="#c7783a" stroke-width="1.4"/>
+<text x="836" y="656" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#c7783a" text-anchor="start">Processor parts, by reference</text>
+<rect x="836" y="668" width="388" height="24" rx="5" fill="#ffffff" stroke="#c7783a" stroke-width="1.1"/>
+<text x="846" y="684" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">AudioUIBridge&amp; audioUIBridge</text>
+<rect x="836" y="696" width="388" height="24" rx="5" fill="#ffffff" stroke="#c7783a" stroke-width="1.1"/>
+<text x="846" y="712" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">CorpusPublisher&amp; corpusPublisher</text>
+<rect x="836" y="724" width="388" height="24" rx="5" fill="#ffffff" stroke="#c7783a" stroke-width="1.1"/>
+<text x="846" y="740" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">SlicePlayer&amp; slicePlayer</text>
+<rect x="836" y="752" width="388" height="24" rx="5" fill="#ffffff" stroke="#c7783a" stroke-width="1.1"/>
+<text x="846" y="768" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">CorpusLoader&amp; corpusLoader</text>
+<rect x="836" y="780" width="388" height="24" rx="5" fill="#ffffff" stroke="#c7783a" stroke-width="1.1"/>
+<text x="846" y="796" font-family="SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="10.5" fill="#1f1f1f" text-anchor="start">UndoManager&amp; undoManager</text>
+<text x="836" y="830" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11" fill="#555" text-anchor="start">plus the settings and colourPresets ValueTree handles</text>
+<polyline points="820,740 790,740 790,300 782,300" fill="none" stroke="#4d4d4d" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#head)"/>
+<text x="20" y="882" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif" font-size="11.5" fill="#333" text-anchor="start">A box inside a box is a member its container owns. The dashed arrow is the editor&#x27;s references into the processor; nothing points back.</text>
+</svg>
