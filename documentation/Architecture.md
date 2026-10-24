@@ -152,7 +152,7 @@ The lower rows depend on the upper ones. The one exception is `ParameterPanel.cp
 
 ## 8. Tests
 
-The tests use [Catch2](https://github.com/catchorg/Catch2) v3 and live in `Tests/`. `TestCorpus` builds a synthetic corpus, so matching and playback can be tested without running the full analysis.
+The tests use [Catch2](https://github.com/catchorg/Catch2) v3 and live in `Tests/`. Unit tests, each checking one class on its own, are in `Tests/Unit/` (`MatchingTests`, `TargetAnalyserTests`, `BridgeTests`, `MapLayoutTests`). Integration tests, which run several parts together through files or `processBlock`, are in `Tests/Integration/` (`LiveMatchingTests`, `CorpusFileTests`, `RealtimeTests`). `TestMain` and `TestCorpus` stay at the top of `Tests/` for both. `TestCorpus` builds a synthetic corpus, so matching and playback can be tested without running the full analysis.
 
 | Test | What it checks |
 |---|---|

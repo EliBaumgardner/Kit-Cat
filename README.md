@@ -58,4 +58,6 @@ cmake --build build --target KitCat_Standalone
 
 The app lands in `build/KitCat_artefacts/Release/Standalone/`. `KitCat_AU` and `KitCat_VST3` also install into `~/Library/Audio/Plug-Ins`. Build `KitCat_Tests`, then run `ctest --test-dir build`.
 
+Unit tests in `Tests/Unit/` check single parts on their own, such as the slice matcher, the live analyser and the map layout. Integration tests in `Tests/Integration/` check those parts working together, through corpus analysis, saved analysis files and the plugin's audio processing.
+
 The live engine runs on the audio thread without allocating, locking or waiting, which a RealtimeSanitizer test checks. [documentation/Architecture.md](documentation/Architecture.md) covers the threads, the matching, latency and tests.

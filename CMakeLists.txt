@@ -111,12 +111,12 @@ enable_testing()
 add_executable(KitCat_Tests
         Tests/TestMain.cpp
         Tests/TestCorpus.cpp
-        Tests/MatchingTests.cpp
-        Tests/LiveMatchingTests.cpp
-        Tests/TargetAnalyserTests.cpp
-        Tests/BridgeTests.cpp
-        Tests/CorpusFileTests.cpp
-        Tests/MapLayoutTests.cpp
+        Tests/Unit/MatchingTests.cpp
+        Tests/Unit/TargetAnalyserTests.cpp
+        Tests/Unit/BridgeTests.cpp
+        Tests/Unit/MapLayoutTests.cpp
+        Tests/Integration/LiveMatchingTests.cpp
+        Tests/Integration/CorpusFileTests.cpp
 )
 
 target_compile_features(KitCat_Tests PRIVATE cxx_std_20)
@@ -131,7 +131,7 @@ if(KITCAT_REALTIME_SANITIZER)
     add_executable(KitCat_RealtimeTests
             Tests/TestMain.cpp
             Tests/TestCorpus.cpp
-            Tests/RealtimeTests.cpp
+            Tests/Integration/RealtimeTests.cpp
     )
 
     target_compile_features(KitCat_RealtimeTests PRIVATE cxx_std_20)
